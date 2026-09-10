@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CNS & GIT Spaced Repetition Tracker (Cloud Sync)</title>
+    <title>CNS, GIT & Urogenital Spaced Repetition Tracker</title>
     
     <!-- Load React, React-DOM, Babel, and Tailwind CSS -->
     <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
@@ -17,6 +17,7 @@
         import { getAuth, signInWithCustomToken, signInAnonymously, onAuthStateChanged, GoogleAuthProvider, signInWithPopup, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { getFirestore, doc, setDoc, deleteDoc, collection, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
+        // Expose Firebase API globally for React consumption
         window.FirebaseAPI = {
             initializeApp, getAuth, signInWithCustomToken, signInAnonymously, onAuthStateChanged, GoogleAuthProvider, signInWithPopup, signOut,
             getFirestore, doc, setDoc, deleteDoc, collection, onSnapshot
@@ -69,7 +70,7 @@
         }
         .animate-spin-slow { animation: spinSlow 10s linear infinite; }
 
-        /* Medical Pulse & Floating Animations */
+        /* Medical Pulse & Wave Scan Animations */
         @keyframes medicalPulse {
           0%, 100% { transform: scale(1); opacity: 0.85; filter: drop-shadow(0 0 8px rgba(6,182,212,0.4)); }
           50% { transform: scale(1.08); opacity: 1; filter: drop-shadow(0 0 16px rgba(6,182,212,0.8)); }
@@ -111,13 +112,6 @@
           filter: brightness(0.95) !important;
         }
 
-        /* Progress Bar Animations */
-        @keyframes shimmerBar {
-          0% { transform: translateX(-100%); }
-          100% { transform: translateX(100%); }
-        }
-        .animate-shimmer-bar { animation: shimmerBar 2s linear infinite; }
-
         /* Custom Scrollbar */
         .custom-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
         .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
@@ -154,7 +148,8 @@
                 Upload: <><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" x2="12" y1="3" y2="15"/></>,
                 LogOut: <><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" x2="9" y1="12" y2="12"/></>,
                 HeartPulse: <><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/><path d="M3.22 12H9.5l.5-1 2 4.5 2-7 1.5 3.5h5.27"/></>,
-                Stethoscope: <><path d="M4.8 2.3A.3.3 0 0 0 4.5 2.6V8A6 6 0 0 0 10.5 14h.03A6 6 0 0 0 16.5 8V2.6a.3.3 0 0 0-.3-.3h-1.4a.3.3 0 0 0-.3.3V8a4 4 0 0 1-8 0V2.6a.3.3 0 0 0-.3-.3Z"/><path d="M10.5 14v4a3 3 0 0 0 3 3h2.5a3.5 3.5 0 1 0 0-7H14"/><circle cx="18.5" cy="17.5" r="1.5"/></>
+                Stethoscope: <><path d="M4.8 2.3A.3.3 0 0 0 4.5 2.6V8A6 6 0 0 0 10.5 14h.03A6 6 0 0 0 16.5 8V2.6a.3.3 0 0 0-.3-.3h-1.4a.3.3 0 0 0-.3.3V8a4 4 0 0 1-8 0V2.6a.3.3 0 0 0-.3-.3Z"/><path d="M10.5 14v4a3 3 0 0 0 3 3h2.5a3.5 3.5 0 1 0 0-7H14"/><circle cx="18.5" cy="17.5" r="1.5"/></>,
+                Droplet: <path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/>
             };
             return (
                 <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round" className={className}>
@@ -224,7 +219,6 @@
           ]
         };
 
-        // All 95 GIT Lectures Cleaned (Doctor names completely removed)
         const GIT_DATA = {
           Anatomy: [
             "Lec 1: Mouth, tongue, Palate",
@@ -336,6 +330,109 @@
             "Lec 87: Nematodes infection of LIPR",
             "Lec 91: Protozoal infection of LI 1",
             "Lec 92: Protozoal infection of LI 2"
+          ]
+        };
+
+        // All 83 Cleaned Urogenital Lectures (Without doctor names)
+        const UROGENITAL_DATA = {
+          Anatomy: [
+            "Lec 1: Anatomy of kidney",
+            "Lec 2: Anatomy of the ureter",
+            "Lec 7: Anatomy of urinary bladder & urethra",
+            "Lec 10: Development of the urinary system 1 (Embryology)",
+            "Lec 22: Development of the urinary system 2",
+            "Lec 35: Introduction to pelvis & pelvic floor muscles, Vessels & nerves of pelvis",
+            "Lec 36: Perineum & Ischiorectal fossa 1",
+            "Lec 39: Male external genital organ",
+            "Lec 40: Male internal genital organ",
+            "Lec 54: Female external genital organs and breast",
+            "Lec 55: Ovary and uterine tubes",
+            "Lec 60: Uterus & Vagina 1",
+            "Lec 61: Uterus & Vagina 2",
+            "Lec 66: Development of male genital system (Embryology) 1",
+            "Lec 67: Development of Female genital system (Embryology) 2"
+          ],
+          Physiology: [
+            "Lec 5: Function of kidney & functional unit",
+            "Lec 6: Renal blood flow & glomerular filtration 1",
+            "Lec 8: Renal blood flow & glomerular filtration 2",
+            "Lec 11: Renal plasma Clearance",
+            "Lec 12: Functions of proximal convoluted tubule 1",
+            "Lec 13: Functions of proximal convoluted tubule 2",
+            "Lec 17: Function of loop of Henle, DCT & collecting tubules",
+            "Lec 18: Urine concentration function",
+            "Lec 19: Regulation ECF osmolality, volume & electrolyte balance",
+            "Lec 23: Acid-base balance",
+            "Lec 24: Acid-base disturbance 1",
+            "Lec 25: Acid-base disturbance 2",
+            "Lec 26: Micturition reflex effect of disordered renal function",
+            "Lec 48: Function of male reproductive system 1",
+            "Lec 49: Function of male reproductive system 2",
+            "Lec 56: Ovarian & uterine Cycle & hormonal control 1",
+            "Lec 57: Ovarian & uterine Cycle & hormonal control 2",
+            "Lec 59: Endocrine functions of ovary & puberty and menopause",
+            "Lec 71: Gestation",
+            "Lec 72: Parturition & lactation"
+          ],
+          Biochemistry: [
+            "Lec 14: Renal metabolism",
+            "Lec 15: Amino acid metabolism 1",
+            "Lec 16: Amino acid metabolism 2",
+            "Lec 20: Inherited renal diseases",
+            "Lec 21: Steroid hormone synthesis"
+          ],
+          Histology: [
+            "Lec 3: Microscopic structure of renal corpuscles & blood renal barrier",
+            "Lec 4: Microscopic structure of renal tubules & interstitium",
+            "Lec 9: Microscopic structure of juxtaglomerular apparatus & the urinary passages",
+            "Lec 46: Microscopic structure of the Testis 1",
+            "Lec 47: Microscopic structure of male genital Ducts & accessory glands",
+            "Lec 58: Microscopic structure of the Ovary",
+            "Lec 62: Microscopic structure of body of Uterus, Cervix & Vagina",
+            "Lec 63: Microscopic structure of Placenta & Mammary Glands"
+          ],
+          Pharmacology: [
+            "Lec 27: Electrolyte Disturbances – Acid base imbalance 1",
+            "Lec 28: Electrolyte Disturbances – Acid base imbalance 2",
+            "Lec 32: Treatment of Urinary tract infections",
+            "Lec 45: Drug therapy in chronic kidney diseases (renal failure)",
+            "Lec 52: Drug therapy of prostatic diseases",
+            "Lec 53: Erectile dysfunction",
+            "Lec 79: Sexually transmitted diseases",
+            "Lec 82: Female Fertility",
+            "Lec 83: Contraception"
+          ],
+          Pathology: [
+            "Lec 33: Introduction to glomerulonephritis",
+            "Lec 34: Nephritic Syndrome 1",
+            "Lec 37: Nephrotic Syndrome 1",
+            "Lec 38: Nephrotic Syndrome 2",
+            "Lec 41: Tubulointerstitial diseases",
+            "Lec 42: Vascular and obstructive renal diseases",
+            "Lec 43: Renal tumors & renal failure",
+            "Lec 44: Diseases of ureter & urinary bladder",
+            "Lec 50: Diseases of scrotal sac, testis and penis",
+            "Lec 51: Diseases of the prostate & male urethra",
+            "Lec 69: Diseases of Vulva & Vagina",
+            "Lec 70: Diseases of Cervix",
+            "Lec 73: Diseases of Body of Uterus 1",
+            "Lec 74: Diseases of Body of Uterus 2",
+            "Lec 77: Diseases of Pregnancy",
+            "Lec 78: Diseases of Fallopian Tubes & Ovaries",
+            "Lec 80: Diseases of the breast 1",
+            "Lec 81: Diseases of the breast 2"
+          ],
+          Microbiology: [
+            "Lec 29: Urinary tract infections 1",
+            "Lec 30: Urinary tract infections 2",
+            "Lec 64: Genital infection 1",
+            "Lec 65: Genital infection 2",
+            "Lec 75: Congenital infection 1",
+            "Lec 76: Congenital infection 2"
+          ],
+          Parasitology: [
+            "Lec 31: Urinary Schistosomiasis",
+            "Lec 68: Trichomoniasis"
           ]
         };
 
@@ -727,7 +824,6 @@
 
           return (
             <div className="min-h-screen text-slate-200 font-sans p-3 sm:p-6 md:p-8 relative overflow-hidden">
-              {/* Background Ambient Bio-Orbs */}
               <div className="absolute top-0 left-1/4 w-96 h-96 bg-cyan-600/15 rounded-full blur-[140px] opacity-70 pointer-events-none z-0"></div>
               <div className="absolute bottom-0 right-1/4 w-[30rem] h-[30rem] bg-emerald-600/15 rounded-full blur-[140px] opacity-60 pointer-events-none z-0"></div>
 
@@ -871,7 +967,7 @@
                     </button>
                   </div>
 
-                  {/* Main Subject Content Table */}
+                  {/* Main Subject Content Table - No horizontal scrollbar, text auto wraps */}
                   {activeTab && (
                     <div key={activeTab} className="animate-fade-in-tab w-full">
                       <SpotlightCard className="bg-slate-900/80 backdrop-blur-xl rounded-2xl shadow-2xl border border-slate-800 overflow-hidden">
@@ -894,7 +990,6 @@
                           </div>
                         </div>
 
-                        {/* NO MIN-WIDTH / WRAPPING TABLE - FITS ALL SCREENS PERFECTLY */}
                         <div className="w-full">
                           <table className="w-full text-left border-collapse table-fixed">
                             <thead>
@@ -939,7 +1034,6 @@
                                        </div>
                                     </td>
                                     
-                                    {/* Topic Cell with Clean Text Wrapping */}
                                     <td className="px-3 py-3 align-middle">
                                       <div className="font-bold text-slate-100 text-xs sm:text-sm md:text-base leading-snug break-words whitespace-normal">
                                         {item.topic}
@@ -1022,7 +1116,7 @@
                         )}
                       </SpotlightCard>
 
-                      {/* Subject Consolidation Progress Bar Chart */}
+                      {/* Subject Progress Summary */}
                       {currentTabItems.length > 0 && (
                         <SpotlightCard className="mt-6 bg-slate-900/80 backdrop-blur-xl rounded-2xl border border-slate-800 p-5 md:p-6">
                           <div className="flex items-center justify-between mb-6 border-b border-slate-800 pb-3">
@@ -1061,7 +1155,7 @@
                         </SpotlightCard>
                       )}
 
-                      {/* Heatmap Activity Tracker */}
+                      {/* Heatmap Activity Matrix */}
                       <SpotlightCard className="mt-6 bg-slate-900/80 backdrop-blur-xl rounded-2xl border border-slate-800 p-5 md:p-6 overflow-hidden">
                         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-4 border-b border-slate-800 pb-3 gap-3">
                           <div className="flex items-center gap-2.5">
@@ -1121,7 +1215,7 @@
                 </main>
               </div>
 
-              {/* Modals for Deletion and Subject Creation */}
+              {/* Modals */}
               {topicToDelete && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm animate-fade-in-backdrop">
                   <div className="bg-slate-900 border border-slate-700/80 rounded-2xl p-6 max-w-sm w-full shadow-2xl animate-scale-up-modal">
@@ -1287,7 +1381,7 @@
             await signOut(getAuth());
           };
 
-          // Snapshot listener with Auto-Injected GIT Module Detection
+          // Snapshot listener with Auto-Injected CNS, GIT & Urogenital Module Detection
           useEffect(() => {
             if (!user || !db) return;
             setIsLoading(true);
@@ -1310,7 +1404,7 @@
                 });
               });
 
-              // Initial Seed: Add BOTH CNS Module & GIT Module automatically if empty
+              // Initial Seed: Add CNS, GIT & Urogenital Modules automatically if empty
               if (loadedModules.length === 0) {
                 const cnsMod = {
                   id: Math.random().toString(36).substr(2, 9),
@@ -1324,6 +1418,12 @@
                   icon: 'Stethoscope',
                   createdAt: new Date().toISOString(),
                 };
+                const uroMod = {
+                  id: Math.random().toString(36).substr(2, 9),
+                  name: 'Urogenital Module (83 Lectures)',
+                  icon: 'Droplet',
+                  createdAt: new Date().toISOString(),
+                };
                 
                 await setDoc(doc(db, 'artifacts', appId, 'users', user.uid, 'modules', cnsMod.id), {
                   ...cnsMod,
@@ -1333,9 +1433,15 @@
                   ...gitMod,
                   dataString: JSON.stringify(sanitizeModuleData(GIT_DATA))
                 });
+                await setDoc(doc(db, 'artifacts', appId, 'users', user.uid, 'modules', uroMod.id), {
+                  ...uroMod,
+                  dataString: JSON.stringify(sanitizeModuleData(UROGENITAL_DATA))
+                });
               } else {
-                // Ensure existing users without GIT Module receive it automatically
+                // Ensure existing users without GIT or Urogenital Modules receive them automatically
                 const hasGit = loadedModules.some(m => m.name.toLowerCase().includes('git'));
+                const hasUro = loadedModules.some(m => m.name.toLowerCase().includes('urogenital'));
+
                 if (!hasGit) {
                   const gitMod = {
                     id: Math.random().toString(36).substr(2, 9),
@@ -1348,6 +1454,20 @@
                     dataString: JSON.stringify(sanitizeModuleData(GIT_DATA))
                   });
                 }
+
+                if (!hasUro) {
+                  const uroMod = {
+                    id: Math.random().toString(36).substr(2, 9),
+                    name: 'Urogenital Module (83 Lectures)',
+                    icon: 'Droplet',
+                    createdAt: new Date().toISOString(),
+                  };
+                  await setDoc(doc(db, 'artifacts', appId, 'users', user.uid, 'modules', uroMod.id), {
+                    ...uroMod,
+                    dataString: JSON.stringify(sanitizeModuleData(UROGENITAL_DATA))
+                  });
+                }
+
                 setModules(loadedModules);
                 setIsLoading(false);
               }
@@ -1410,6 +1530,19 @@
             };
             const modRef = doc(db, 'artifacts', appId, 'users', user.uid, 'modules', gitMod.id);
             await setDoc(modRef, { ...gitMod, dataString: JSON.stringify(sanitizeModuleData(GIT_DATA)) });
+          };
+
+          const handleAddPresetUrogenital = async () => {
+            if (!user || !db) return;
+            const { doc, setDoc } = window.FirebaseAPI;
+            const uroMod = {
+              id: Math.random().toString(36).substr(2, 9),
+              name: 'Urogenital Module (83 Lectures)',
+              icon: 'Droplet',
+              createdAt: new Date().toISOString(),
+            };
+            const modRef = doc(db, 'artifacts', appId, 'users', user.uid, 'modules', uroMod.id);
+            await setDoc(modRef, { ...uroMod, dataString: JSON.stringify(sanitizeModuleData(UROGENITAL_DATA)) });
           };
 
           const handleDeleteModule = async (id) => {
@@ -1517,11 +1650,9 @@
 
           return (
             <div className="min-h-screen bg-slate-950 text-slate-200 font-sans p-4 md:p-8 relative overflow-hidden">
-              {/* Background Ambient Bio-Orbs */}
               <div className="absolute top-0 left-1/4 w-[28rem] h-[28rem] bg-cyan-600/15 rounded-full blur-[140px] opacity-70 pointer-events-none z-0 animate-float-slow"></div>
               <div className="absolute bottom-0 right-1/4 w-[32rem] h-[32rem] bg-emerald-600/15 rounded-full blur-[140px] opacity-60 pointer-events-none z-0 animate-float-slow" style={{animationDelay: '-3s'}}></div>
               
-              {/* ECG Wave Scanner Bar */}
               <div className="absolute top-16 left-0 w-full h-[2px] bg-gradient-to-r from-transparent via-cyan-500/30 to-transparent pointer-events-none z-0 overflow-hidden">
                 <div className="w-1/3 h-full bg-cyan-400 shadow-[0_0_15px_#22d3ee] animate-ecg-scan"></div>
               </div>
@@ -1548,7 +1679,10 @@
 
                   <div className="flex flex-wrap items-center gap-2 self-start lg:self-auto">
                     <button onClick={handleAddPresetGit} className="interactive-pop flex items-center gap-1.5 px-3 py-2 bg-cyan-950/60 border border-cyan-500/40 hover:bg-cyan-900/60 rounded-xl text-xs font-bold text-cyan-300 shadow-sm">
-                      <Icon name="Plus" size={15} /> Add GIT Module (95 Lecs)
+                      <Icon name="Plus" size={15} /> Add GIT (95 Lecs)
+                    </button>
+                    <button onClick={handleAddPresetUrogenital} className="interactive-pop flex items-center gap-1.5 px-3 py-2 bg-emerald-950/60 border border-emerald-500/40 hover:bg-emerald-900/60 rounded-xl text-xs font-bold text-emerald-300 shadow-sm">
+                      <Icon name="Plus" size={15} /> Add Urogenital (83 Lecs)
                     </button>
                     <button onClick={handleExportData} className="interactive-pop flex items-center gap-1.5 px-3 py-2 bg-slate-900/90 border border-slate-700 hover:border-cyan-500/40 rounded-xl text-xs font-bold text-slate-300">
                       <Icon name="Upload" size={15} /> Export
@@ -1565,7 +1699,7 @@
 
                 <DigitalClock />
 
-                {/* Module Card Drag-and-Drop Hub */}
+                {/* Module Cards Grid */}
                 <main className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
                   {modules.map((mod, index) => {
                     const totalTopics = Object.values(mod.data || {}).flat().length;
@@ -1641,6 +1775,7 @@
                 </main>
               </div>
 
+              {/* Modals */}
               {isCreatingModule && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm animate-fade-in-backdrop">
                   <div className="bg-slate-900 border border-slate-700/80 rounded-2xl p-6 max-w-sm w-full shadow-2xl animate-scale-up-modal">
@@ -1672,7 +1807,7 @@
 
               <Watermark />
             </div>
-          )
+          );
         };
 
         const root = ReactDOM.createRoot(document.getElementById('root'));
