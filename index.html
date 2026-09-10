@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CNS & GIT Spaced Repetition Tracker (Cloud Sync)</title>
     
-    <!-- Load React and Tools -->
+    <!-- Load React, React-DOM, Babel, and Tailwind CSS -->
     <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
     <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
@@ -17,7 +17,6 @@
         import { getAuth, signInWithCustomToken, signInAnonymously, onAuthStateChanged, GoogleAuthProvider, signInWithPopup, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { getFirestore, doc, setDoc, deleteDoc, collection, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-        // Expose Firebase API globally so React can consume it smoothly
         window.FirebaseAPI = {
             initializeApp, getAuth, signInWithCustomToken, signInAnonymously, onAuthStateChanged, GoogleAuthProvider, signInWithPopup, signOut,
             getFirestore, doc, setDoc, deleteDoc, collection, onSnapshot
@@ -29,33 +28,33 @@
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
         
         @keyframes addTopicGlow {
-          0% { opacity: 0; transform: translateY(-20px); background-color: rgba(20, 184, 166, 0.4); }
-          50% { background-color: rgba(20, 184, 166, 0.15); transform: translateY(0); }
+          0% { opacity: 0; transform: translateY(-20px); background-color: rgba(6, 182, 212, 0.4); }
+          50% { background-color: rgba(6, 182, 212, 0.15); transform: translateY(0); }
           100% { opacity: 1; background-color: transparent; }
         }
         .animate-add-topic { animation: addTopicGlow 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
         
         @keyframes slideInFromRight {
-          0% { opacity: 0; transform: translateX(40px) scale(0.98); }
+          0% { opacity: 0; transform: translateX(30px) scale(0.98); }
           100% { opacity: 1; transform: translateX(0) scale(1); }
         }
         .animate-slide-in-right { animation: slideInFromRight 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
         
         @keyframes slideInFromLeft {
-          0% { opacity: 0; transform: translateX(-40px) scale(0.98); }
+          0% { opacity: 0; transform: translateX(-30px) scale(0.98); }
           100% { opacity: 1; transform: translateX(0) scale(1); }
         }
         .animate-slide-in-left { animation: slideInFromLeft 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
         
         @keyframes fadeInTab {
-          0% { opacity: 0; transform: translateY(15px) scale(0.99); }
+          0% { opacity: 0; transform: translateY(12px) scale(0.99); }
           100% { opacity: 1; transform: translateY(0) scale(1); }
         }
         .animate-fade-in-tab { animation: fadeInTab 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
         
         @keyframes fadeInBackdrop {
           0% { opacity: 0; backdrop-filter: blur(0px); }
-          100% { opacity: 1; backdrop-filter: blur(4px); }
+          100% { opacity: 1; backdrop-filter: blur(6px); }
         }
         .animate-fade-in-backdrop { animation: fadeInBackdrop 0.3s ease-out forwards; }
         
@@ -64,120 +63,69 @@
           100% { opacity: 1; transform: scale(1) translateY(0); }
         }
         .animate-scale-up-modal { animation: scaleUpModal 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
-        
-        @keyframes fadeHeatmap {
-          0% { opacity: 0; transform: scale(0.95); }
-          100% { opacity: 1; transform: scale(1); }
-        }
-        .animate-fade-heatmap { animation: fadeHeatmap 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
-
-        @keyframes slideFadeAgenda {
-          0% { opacity: 0; transform: translateX(10px); }
-          100% { opacity: 1; transform: translateX(0); }
-        }
-        .animate-agenda { animation: slideFadeAgenda 0.3s ease-out forwards; }
 
         @keyframes spinSlow {
           100% { transform: rotate(360deg); }
         }
-        .animate-spin-slow { animation: spinSlow 8s linear infinite; }
+        .animate-spin-slow { animation: spinSlow 10s linear infinite; }
+
+        /* Medical Pulse & Floating Animations */
+        @keyframes medicalPulse {
+          0%, 100% { transform: scale(1); opacity: 0.85; filter: drop-shadow(0 0 8px rgba(6,182,212,0.4)); }
+          50% { transform: scale(1.08); opacity: 1; filter: drop-shadow(0 0 16px rgba(6,182,212,0.8)); }
+        }
+        .animate-medical-pulse { animation: medicalPulse 2.5s ease-in-out infinite; }
+
+        @keyframes ecgScan {
+          0% { transform: translateX(-100%); }
+          100% { transform: translateX(200%); }
+        }
+        .animate-ecg-scan { animation: ecgScan 3.5s linear infinite; }
+
+        @keyframes floatSlow {
+          0%, 100% { transform: translateY(0px) rotate(0deg); }
+          50% { transform: translateY(-10px) rotate(2deg); }
+        }
+        .animate-float-slow { animation: floatSlow 6s ease-in-out infinite; }
 
         @keyframes highlightPulse {
-          0% { background-color: rgba(20, 184, 166, 0.6); transform: scale(1.02); box-shadow: 0 0 20px rgba(20, 184, 166, 0.4); z-index: 20; border-radius: 8px; }
-          30% { background-color: rgba(20, 184, 166, 0.2); transform: scale(1.01); box-shadow: 0 0 10px rgba(20, 184, 166, 0.1); z-index: 20; border-radius: 8px; }
-          100% { background-color: transparent; transform: scale(1); box-shadow: none; z-index: auto; border-radius: 0; }
+          0% { background-color: rgba(6, 182, 212, 0.6); transform: scale(1.01); box-shadow: 0 0 20px rgba(6, 182, 212, 0.5); z-index: 20; }
+          30% { background-color: rgba(6, 182, 212, 0.2); transform: scale(1); box-shadow: 0 0 10px rgba(6, 182, 212, 0.2); }
+          100% { background-color: transparent; transform: scale(1); box-shadow: none; }
         }
         .animate-highlight-row { 
           animation: highlightPulse 2s cubic-bezier(0.16, 1, 0.3, 1) forwards; 
-          position: relative;
         }
 
-        /* --- GLOBAL INTERACTIVE POP & GLOW --- */
+        /* Interactive Micro-Interactions */
         button:not(:disabled), .interactive-pop {
-          transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), filter 0.3s ease, box-shadow 0.3s ease !important;
+          transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1), filter 0.25s ease, box-shadow 0.25s ease !important;
           will-change: transform, filter;
-          position: relative;
         }
         button:not(:disabled):hover, .interactive-pop:hover {
-          transform: scale(1.04) translateY(-2px) !important;
-          filter: brightness(1.2) drop-shadow(0 8px 12px rgba(0, 0, 0, 0.3)) !important;
-          z-index: 40 !important;
+          transform: scale(1.03) translateY(-2px) !important;
+          filter: brightness(1.2) drop-shadow(0 8px 16px rgba(6, 182, 212, 0.25)) !important;
         }
         button:not(:disabled):active, .interactive-pop:active {
-          transform: scale(0.96) translateY(0) !important;
-          filter: brightness(0.9) !important;
-          box-shadow: none !important;
+          transform: scale(0.97) translateY(0) !important;
+          filter: brightness(0.95) !important;
         }
 
-        /* Gentler scale for wide table rows and chart bars */
-        tr.interactive-pop:hover, .chart-row.interactive-pop:hover {
-          transform: scale(1.015) translateY(-2px) !important;
-        }
-
-        /* --- PROGRESS BAR ANIMATIONS --- */
+        /* Progress Bar Animations */
         @keyframes shimmerBar {
           0% { transform: translateX(-100%); }
           100% { transform: translateX(100%); }
         }
         .animate-shimmer-bar { animation: shimmerBar 2s linear infinite; }
 
-        @keyframes neonTail {
-          0%, 100% { width: 10px; opacity: 0.6; filter: blur(3px); transform: translateX(2px); }
-          50% { width: 24px; opacity: 1; filter: blur(5px) brightness(1.4); transform: translateX(0); }
-        }
-        .animate-neon-tail { animation: neonTail 1.5s ease-in-out infinite; right: 0; }
-
-        @keyframes spark1 {
-          0% { transform: translate(0, -50%) scale(1); opacity: 1; }
-          100% { transform: translate(-20px, -200%) scale(0); opacity: 0; }
-        }
-        @keyframes spark2 {
-          0% { transform: translate(0, -50%) scale(1); opacity: 1; }
-          100% { transform: translate(-25px, 100%) scale(0); opacity: 0; }
-        }
-        @keyframes spark3 {
-          0% { transform: translate(0, -50%) scale(1.5); opacity: 1; }
-          100% { transform: translate(-15px, -50%) scale(0); opacity: 0; }
-        }
-        .animate-spark-1 { animation: spark1 1s ease-out infinite; }
-        .animate-spark-2 { animation: spark2 1.2s ease-out infinite; }
-        .animate-spark-3 { animation: spark3 0.8s ease-out infinite; }
-
-        /* --- 100% CHAOTIC EXPLOSION FLARE --- */
-        @keyframes chaoticFlare {
-          0% { filter: brightness(1); transform: scale(1) translate(0, 0); box-shadow: 0 0 0px rgba(16, 185, 129, 0); }
-          10% { filter: brightness(3) contrast(1.5); transform: scale(1.05) translate(-3px, 2px); box-shadow: 0 0 50px rgba(16, 185, 129, 1), 0 0 20px #fff inset; }
-          20% { transform: scale(1.02) translate(4px, -3px) skewX(2deg); filter: brightness(2.5); }
-          30% { transform: scale(1.06) translate(-4px, -2px) skewX(-2deg); filter: brightness(4) hue-rotate(-15deg); }
-          40% { transform: scale(0.98) translate(3px, 4px); filter: brightness(2); box-shadow: 0 0 60px rgba(20, 184, 166, 1), 0 0 25px #fff inset; }
-          50% { transform: scale(1.03) translate(-2px, -3px); filter: brightness(3); box-shadow: 0 0 40px rgba(16, 185, 129, 0.8), 0 0 10px #fff inset; }
-          60% { transform: scale(0.99) translate(2px, 2px); filter: brightness(1.5); }
-          100% { filter: brightness(1.1); transform: scale(1) translate(0, 0); box-shadow: 0 0 15px rgba(16, 185, 129, 0.5); }
-        }
-        .animate-chaotic-flare { animation: chaoticFlare 0.8s cubic-bezier(0.1, 0.8, 0.3, 1) forwards; }
-
-        @keyframes chaoticSweep {
-          0% { transform: translateX(-100%) skewX(-30deg) scaleY(1); opacity: 0; }
-          10% { opacity: 1; filter: brightness(3); }
-          40% { transform: translateX(50%) skewX(-30deg) scaleY(2); opacity: 1; filter: brightness(4); }
-          100% { transform: translateX(200%) skewX(-30deg) scaleY(1); opacity: 0; }
-        }
-        .animate-chaotic-sweep { animation: chaoticSweep 0.5s ease-out forwards; }
-
-        @keyframes particleExplode {
-          0% { transform: translate(0, 0) scale(2.5); opacity: 1; filter: brightness(3); }
-          100% { transform: translate(var(--tx), var(--ty)) scale(0); opacity: 0; filter: brightness(1); }
-        }
-        .animate-particle-explode { animation: particleExplode 0.7s cubic-bezier(0.1, 0.8, 0.3, 1) forwards; }
-
-        /* Scrollbar */
-        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        /* Custom Scrollbar */
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
         .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
-        .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(51, 65, 85, 0.5); border-radius: 10px; }
-        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: rgba(71, 85, 105, 0.8); }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(30, 41, 59, 0.8); border-radius: 10px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: rgba(6, 182, 212, 0.5); }
     </style>
 </head>
-<body class="bg-slate-950">
+<body class="bg-slate-950 text-slate-100 font-sans selection:bg-cyan-500/30 selection:text-cyan-200">
     <div id="root"></div>
 
     <script type="text/babel">
@@ -201,14 +149,12 @@
                 CalendarDays: <><rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" x2="16" y1="2" y2="6"/><line x1="8" x2="8" y1="2" y2="6"/><line x1="3" x2="21" y1="10" y2="10"/><path d="M8 14h.01"/><path d="M12 14h.01"/><path d="M16 14h.01"/><path d="M8 18h.01"/><path d="M12 18h.01"/><path d="M16 18h.01"/></>,
                 ChevronLeft: <polyline points="15 18 9 12 15 6"/>,
                 ChevronRight: <polyline points="9 18 15 12 9 6"/>,
-                ArrowLeft: <><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></>,
                 FolderPlus: <><path d="M12 10v6"/><path d="M9 13h6"/><path d="M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z"/></>,
-                Check: <polyline points="20 6 9 17 4 12"/>,
                 Download: <><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></>,
                 Upload: <><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" x2="12" y1="3" y2="15"/></>,
                 LogOut: <><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" x2="9" y1="12" y2="12"/></>,
-                User: <><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></>,
-                Layers: <><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></>
+                HeartPulse: <><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/><path d="M3.22 12H9.5l.5-1 2 4.5 2-7 1.5 3.5h5.27"/></>,
+                Stethoscope: <><path d="M4.8 2.3A.3.3 0 0 0 4.5 2.6V8A6 6 0 0 0 10.5 14h.03A6 6 0 0 0 16.5 8V2.6a.3.3 0 0 0-.3-.3h-1.4a.3.3 0 0 0-.3.3V8a4 4 0 0 1-8 0V2.6a.3.3 0 0 0-.3-.3Z"/><path d="M10.5 14v4a3 3 0 0 0 3 3h2.5a3.5 3.5 0 1 0 0-7H14"/><circle cx="18.5" cy="17.5" r="1.5"/></>
             };
             return (
                 <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round" className={className}>
@@ -278,6 +224,7 @@
           ]
         };
 
+        // All 95 GIT Lectures Cleaned (Doctor names completely removed)
         const GIT_DATA = {
           Anatomy: [
             "Lec 1: Mouth, tongue, Palate",
@@ -397,8 +344,8 @@
         const getProgressColor = (percent) => {
           if (percent === 0) return 'bg-transparent';
           if (percent <= 34) return 'bg-gradient-to-r from-rose-500 to-orange-500 shadow-[0_0_12px_rgba(249,115,22,0.4)]';
-          if (percent <= 68) return 'bg-gradient-to-r from-orange-500 to-lime-400 shadow-[0_0_12px_rgba(163,230,53,0.4)]';
-          return 'bg-gradient-to-r from-lime-400 to-emerald-500 shadow-[0_0_12px_rgba(16,185,129,0.5)]';
+          if (percent <= 68) return 'bg-gradient-to-r from-orange-500 to-cyan-400 shadow-[0_0_12px_rgba(34,211,238,0.4)]';
+          return 'bg-gradient-to-r from-cyan-400 to-emerald-400 shadow-[0_0_12px_rgba(52,211,153,0.5)]';
         };
 
         const getTargetDate = (firstLearned, reps, targetIdx) => {
@@ -424,7 +371,6 @@
           </div>
         );
 
-        // Advanced Serialization to prevent nested array limits in DB
         const sanitizeModuleData = (dataObj) => {
           const sanitized = {};
           if (!dataObj) return sanitized;
@@ -432,7 +378,7 @@
           Object.entries(dataObj).forEach(([subject, items]) => {
             let itemsArray = Array.isArray(items) ? items : (items && typeof items === 'object' ? Object.values(items) : []);
             
-            sanitized[subject] = itemsArray.map((item, idx) => {
+            sanitized[subject] = itemsArray.map((item) => {
               const defaultReps = [false, false, false];
               let itemReps = (item && Array.isArray(item.reps)) ? [...item.reps] : [...defaultReps];
               while (itemReps.length < INTERVALS.length) itemReps.push(false);
@@ -456,7 +402,7 @@
           return sanitized;
         };
 
-        const SpotlightCard = ({ children, className = "", onClick, spotlightColor = "rgba(45, 212, 191, 0.25)" }) => {
+        const SpotlightCard = ({ children, className = "", onClick, spotlightColor = "rgba(6, 182, 212, 0.25)" }) => {
           const divRef = useRef(null);
 
           const handleMouseMove = (e) => {
@@ -478,7 +424,7 @@
               <div 
                 className="pointer-events-none absolute -inset-px z-0 opacity-0 transition-opacity duration-500 group-hover/spotlight:opacity-100 mix-blend-screen"
                 style={{
-                  background: `radial-gradient(100px circle at var(--mouse-x, 0) var(--mouse-y, 0), ${spotlightColor}, transparent 100%)`
+                  background: `radial-gradient(120px circle at var(--mouse-x, 0) var(--mouse-y, 0), ${spotlightColor}, transparent 100%)`
                 }}
               />
               {children}
@@ -504,12 +450,12 @@
           const [timeVals, ampm] = timeString.split(' ');
 
           return (
-            <SpotlightCard className="flex items-center gap-4 bg-slate-900/60 border border-slate-700/50 hover:border-teal-500/50 px-6 py-4 rounded-2xl shadow-[0_0_30px_rgba(20,184,166,0.1)] backdrop-blur-xl transition-all duration-300 hover:scale-[1.02] hover:-translate-y-1 cursor-default select-none w-full max-w-md mx-auto justify-center mb-10">
+            <SpotlightCard className="flex items-center gap-4 bg-slate-900/70 border border-cyan-500/30 hover:border-cyan-400 px-6 py-3.5 rounded-2xl shadow-[0_0_25px_rgba(6,182,212,0.15)] backdrop-blur-xl transition-all duration-300 cursor-default select-none w-full max-w-sm mx-auto justify-center mb-8">
               <div className="flex items-baseline gap-2 relative z-10">
-                <span className="text-4xl md:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-teal-300 to-cyan-300 tabular-nums tracking-tight drop-shadow-md">
+                <span className="text-3xl md:text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-cyan-300 via-teal-300 to-emerald-300 tabular-nums tracking-tight">
                   {timeVals}
                 </span>
-                <span className="text-xl md:text-2xl font-bold text-teal-500/80 uppercase tracking-widest">
+                <span className="text-lg md:text-xl font-bold text-cyan-400 uppercase tracking-widest">
                   {ampm}
                 </span>
               </div>
@@ -625,36 +571,6 @@
             return { items, overdueCount };
           }, [trackerData, agendaDate]);
 
-          const nextRevision = useMemo(() => {
-            let earliestDate = null;
-            let nextTopic = null;
-
-            Object.entries(trackerData).forEach(([subject, topics]) => {
-              if (!Array.isArray(topics)) return;
-              topics.forEach(item => {
-                if (!item || !item.firstLearned) return;
-
-                const nextRepIdx = (item.reps || []).findIndex(r => !r);
-                if (nextRepIdx === -1) return; 
-
-                const repDate = getTargetDate(item.firstLearned, item.reps, nextRepIdx);
-
-                if (!earliestDate || repDate < earliestDate) {
-                  earliestDate = repDate;
-                  nextTopic = {
-                    id: item.id,
-                    subject,
-                    topic: item.topic,
-                    date: repDate,
-                    repNumber: nextRepIdx + 1
-                  };
-                }
-              });
-            });
-
-            return nextTopic;
-          }, [trackerData]);
-
           const formatDate = (date) => {
             if (!date) return '';
             return date.toLocaleDateString('en-GB', { day: '2-digit', month: 'short' });
@@ -727,25 +643,16 @@
           const [isDragging, setIsDragging] = useState(false);
           const [dragHoverIndex, setDragHoverIndex] = useState(null);
 
-          const dragSubjectItem = useRef(null);
-          const dragOverSubjectItem = useRef(null);
-          const [isDraggingSubject, setIsDraggingSubject] = useState(false);
-          const [dragHoverSubjectIndex, setDragHoverSubjectIndex] = useState(null);
-
           const handleDragStart = (e, index) => {
             dragItem.current = index;
-            if (e.dataTransfer) {
-              e.dataTransfer.effectAllowed = 'move';
-            }
+            if (e.dataTransfer) e.dataTransfer.effectAllowed = 'move';
             setTimeout(() => setIsDragging(true), 0);
           };
 
           const handleDragEnter = (e, index) => {
             e.preventDefault();
             dragOverItem.current = index;
-            if (dragItem.current !== index) {
-              setDragHoverIndex(index);
-            }
+            if (dragItem.current !== index) setDragHoverIndex(index);
           };
 
           const handleSort = () => {
@@ -768,61 +675,6 @@
             setDragHoverIndex(null);
             dragItem.current = null;
             dragOverItem.current = null;
-          };
-
-          const handleSubjectDragStart = (e, index) => {
-            dragSubjectItem.current = index;
-            if (e.dataTransfer) {
-              e.dataTransfer.effectAllowed = 'move';
-            }
-            setTimeout(() => setIsDraggingSubject(true), 0);
-          };
-
-          const handleSubjectDragEnter = (e, index) => {
-            e.preventDefault();
-            dragOverSubjectItem.current = index;
-            if (dragSubjectItem.current !== index) {
-              setDragHoverSubjectIndex(index);
-            }
-          };
-
-          const handleSubjectDragEnd = () => {
-            if (dragSubjectItem.current === null || dragOverSubjectItem.current === null) return;
-            if (dragSubjectItem.current === dragOverSubjectItem.current) {
-              setIsDraggingSubject(false);
-              setDragHoverSubjectIndex(null);
-              return;
-            }
-
-            const keys = Object.keys(trackerData);
-            const draggedKey = keys[dragSubjectItem.current];
-            
-            keys.splice(dragSubjectItem.current, 1);
-            keys.splice(dragOverSubjectItem.current, 0, draggedKey);
-
-            const newData = {};
-            keys.forEach(k => {
-              newData[k] = trackerData[k];
-            });
-
-            onUpdate({ ...module, data: newData });
-
-            setIsDraggingSubject(false);
-            setDragHoverSubjectIndex(null);
-            dragSubjectItem.current = null;
-            dragOverSubjectItem.current = null;
-          };
-
-          const handleDeleteSubject = (subject) => {
-            const newData = { ...trackerData };
-            delete newData[subject];
-            onUpdate({ ...module, data: newData });
-            
-            if (activeTab === subject) {
-              const remainingKeys = Object.keys(newData);
-              setActiveTab(remainingKeys.length > 0 ? remainingKeys[0] : null);
-            }
-            setSubjectToDelete(null);
           };
 
           const addNewTopic = (e) => {
@@ -861,50 +713,59 @@
             setNewSubjectName('');
           };
 
+          const handleDeleteSubject = (subject) => {
+            const newData = { ...trackerData };
+            delete newData[subject];
+            onUpdate({ ...module, data: newData });
+            
+            if (activeTab === subject) {
+              const remainingKeys = Object.keys(newData);
+              setActiveTab(remainingKeys.length > 0 ? remainingKeys[0] : null);
+            }
+            setSubjectToDelete(null);
+          };
+
           return (
-            <div className="min-h-screen text-slate-200 font-sans p-4 md:p-8 relative overflow-hidden selection:bg-teal-500/30">
+            <div className="min-h-screen text-slate-200 font-sans p-3 sm:p-6 md:p-8 relative overflow-hidden">
+              {/* Background Ambient Bio-Orbs */}
+              <div className="absolute top-0 left-1/4 w-96 h-96 bg-cyan-600/15 rounded-full blur-[140px] opacity-70 pointer-events-none z-0"></div>
+              <div className="absolute bottom-0 right-1/4 w-[30rem] h-[30rem] bg-emerald-600/15 rounded-full blur-[140px] opacity-60 pointer-events-none z-0"></div>
 
-              {/* Glowing Background Orbs */}
-              <div className="absolute top-0 left-1/4 w-96 h-96 bg-teal-600/20 rounded-full mix-blend-screen blur-[128px] opacity-60 pointer-events-none z-0"></div>
-              <div className="absolute bottom-0 right-1/4 w-[30rem] h-[30rem] bg-cyan-600/10 rounded-full mix-blend-screen blur-[128px] opacity-60 pointer-events-none z-0"></div>
-              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-slate-900/0 via-slate-950/50 to-slate-950 pointer-events-none z-0"></div>
-
-              {/* Animated Content Wrapper */}
-              <div className="animate-slide-in-right relative z-10 w-full">
-                <header className="max-w-7xl mx-auto mb-8">
+              <div className="animate-slide-in-right relative z-10 w-full max-w-7xl mx-auto">
+                <header className="mb-6">
                   <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                     <div>
                       <div className="flex items-center gap-3 mb-2">
-                          <button onClick={onBack} className="interactive-pop p-2 bg-slate-900/80 border border-slate-700 hover:bg-slate-800 active:scale-90 rounded-xl text-slate-400 hover:text-teal-400 transition-all shadow-sm">
+                          <button onClick={onBack} className="interactive-pop p-2 bg-slate-900/80 border border-slate-700/80 hover:border-cyan-500/50 rounded-xl text-slate-400 hover:text-cyan-300 transition-all shadow-sm">
                               <Icon name="ChevronLeft" size={20} />
                           </button>
-                          <h1 className="text-3xl md:text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-teal-400 to-cyan-400 flex items-center gap-3">
-                            <Icon name={module.icon || "BookOpen"} className="text-teal-400" size={32} />
+                          <h1 className="text-2xl sm:text-3xl md:text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-cyan-300 via-teal-300 to-emerald-400 flex items-center gap-3">
+                            <Icon name={module.icon || "BookOpen"} className="text-cyan-400" size={32} />
                             {module.name} Repetition
                           </h1>
                       </div>
-                      <p className="text-slate-400 mt-1 flex items-center gap-2 text-sm ml-[3.25rem]">
-                        <Icon name="Network" size={16} className="text-cyan-400" />
-                        Neural pathways active.
+                      <p className="text-slate-400 text-xs sm:text-sm ml-11 flex items-center gap-2">
+                        <Icon name="Stethoscope" size={16} className="text-cyan-400" />
+                        Clinical Repetition Protocol Active
                       </p>
                     </div>
                     
-                    <div className="bg-slate-900/80 backdrop-blur-md p-4 rounded-xl shadow-lg border border-slate-700/50 flex flex-wrap gap-4 items-center justify-center">
+                    <div className="bg-slate-900/90 backdrop-blur-md p-3 px-4 rounded-xl shadow-lg border border-slate-800 flex flex-wrap gap-3.5 items-center justify-center text-xs">
                       <div className="flex items-center gap-2">
-                        <div className="w-3 h-3 rounded-full bg-rose-500 animate-pulse shadow-[0_0_8px_rgba(225,29,72,0.6)]"></div>
-                        <span className="text-[11px] font-bold text-slate-300 uppercase tracking-tight">Due Now</span>
+                        <div className="w-2.5 h-2.5 rounded-full bg-rose-500 animate-pulse shadow-[0_0_8px_rgba(225,29,72,0.6)]"></div>
+                        <span className="font-bold text-slate-300">Due</span>
                       </div>
                       <div className="flex items-center gap-2">
-                        <div className="w-3 h-3 rounded-full bg-amber-400 shadow-[0_0_8px_rgba(251,191,36,0.4)]"></div>
-                        <span className="text-[11px] font-bold text-slate-300 uppercase tracking-tight">Soon (&lt;3d)</span>
+                        <div className="w-2.5 h-2.5 rounded-full bg-amber-400 shadow-[0_0_8px_rgba(251,191,36,0.4)]"></div>
+                        <span className="font-bold text-slate-300">Soon (&lt;3d)</span>
                       </div>
                       <div className="flex items-center gap-2">
-                        <div className="w-3 h-3 rounded-full bg-teal-900/50 border border-teal-500/50"></div>
-                        <span className="text-[11px] font-bold text-slate-300 uppercase tracking-tight">Future</span>
+                        <div className="w-2.5 h-2.5 rounded-full bg-cyan-900/60 border border-cyan-500/40"></div>
+                        <span className="font-bold text-slate-300">Scheduled</span>
                       </div>
-                      <div className="flex items-center gap-2 pl-2 border-l border-slate-700">
-                        <div className="w-3 h-3 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.4)]"></div>
-                        <span className="text-[11px] font-bold text-slate-300 uppercase tracking-tight">Done</span>
+                      <div className="flex items-center gap-2 pl-2 border-l border-slate-800">
+                        <div className="w-2.5 h-2.5 rounded-full bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.4)]"></div>
+                        <span className="font-bold text-slate-300">Done</span>
                       </div>
                     </div>
                   </div>
@@ -912,93 +773,59 @@
 
                 <DigitalClock />
 
-                <main className="max-w-7xl mx-auto">
-                  {nextRevision && (
-                    <SpotlightCard spotlightColor="rgba(45, 212, 191, 0.2)" className="mb-6 bg-gradient-to-r from-teal-900/40 via-slate-900/60 to-slate-900/40 border border-teal-500/30 rounded-2xl p-4 flex flex-col md:flex-row items-start md:items-center gap-4 md:gap-6 shadow-[0_0_20px_rgba(20,184,166,0.1)] backdrop-blur-md relative overflow-hidden">
-                      <div className="absolute top-0 left-0 w-1 h-full bg-teal-500 shadow-[0_0_10px_rgba(20,184,166,0.8)] z-10"></div>
-                      <div className="bg-teal-500/20 p-3 rounded-full text-teal-400 shrink-0 self-start md:self-auto relative z-10">
-                        <Icon name="BellRing" size={24} className="animate-pulse" />
-                      </div>
-                      <div className="flex-1 relative z-10">
-                        <h3 className="text-xs font-bold text-teal-400 uppercase tracking-wider mb-1">Up Next For Revision</h3>
-                        <p className="text-slate-100 font-bold text-lg leading-snug">
-                          {nextRevision.topic}
-                        </p>
-                        <div className="flex flex-wrap items-center gap-x-4 gap-y-2 mt-2 text-sm text-slate-400">
-                          <span className="flex items-center gap-1.5 font-medium">
-                            <Icon name="BookOpen" size={14} className="text-cyan-400"/> 
-                            {nextRevision.subject}
-                          </span>
-                          <span className="flex items-center gap-1.5 font-medium text-teal-300 bg-teal-950/50 px-2 py-0.5 rounded border border-teal-500/20">
-                            <Icon name="Calendar" size={14}/> 
-                            {formatDate(nextRevision.date)}
-                          </span>
-                          <span className="bg-slate-800 text-slate-300 px-2 py-0.5 rounded text-xs font-bold uppercase tracking-wide">
-                            Rep #{nextRevision.repNumber}
-                          </span>
-                        </div>
-                      </div>
-                      <button 
-                        onClick={() => handleAgendaItemClick(nextRevision.subject, nextRevision.id)} 
-                        className="interactive-pop mt-2 md:mt-0 w-full md:w-auto px-5 py-2.5 bg-teal-600/20 hover:bg-teal-600/40 active:scale-95 text-teal-300 hover:text-teal-200 rounded-xl text-sm font-bold transition-all border border-teal-500/30 whitespace-nowrap relative z-10"
-                      >
-                        Go to Subject
-                      </button>
-                    </SpotlightCard>
-                  )}
-
-                  <SpotlightCard spotlightColor="rgba(16, 185, 129, 0.2)" className="mb-8 bg-gradient-to-r from-emerald-900/30 via-slate-900/60 to-teal-900/20 border border-emerald-500/30 rounded-2xl p-4 md:p-5 shadow-[0_0_20px_rgba(16,185,129,0.15)] backdrop-blur-md relative overflow-hidden flex flex-col">
-                    <div className="absolute top-0 left-0 w-1 h-full bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.8)] z-10"></div>
+                <main>
+                  {/* Daily Agenda Bar */}
+                  <SpotlightCard spotlightColor="rgba(52, 211, 153, 0.2)" className="mb-6 bg-slate-900/80 border border-emerald-500/30 rounded-2xl p-4 shadow-[0_0_20px_rgba(16,185,129,0.1)] backdrop-blur-md relative overflow-hidden flex flex-col">
+                    <div className="absolute top-0 left-0 w-1 h-full bg-emerald-400 shadow-[0_0_10px_rgba(52,211,153,0.8)] z-10"></div>
                     
-                    <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-4 pb-4 border-b border-slate-800 gap-4 pl-3 relative z-10">
-                      <div className="flex items-center gap-3">
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-3 pb-3 border-b border-slate-800 gap-3 pl-2">
+                      <div className="flex items-center gap-2.5">
                         <div className="bg-emerald-500/20 p-2 rounded-lg text-emerald-400 shrink-0">
-                          <Icon name="Calendar" size={20} />
+                          <Icon name="Calendar" size={18} />
                         </div>
                         <div>
-                          <h3 className="font-bold text-slate-200 text-lg">Daily Agenda</h3>
+                          <h3 className="font-bold text-slate-200 text-base">Daily Agenda</h3>
                           {agendaOffset === 0 && agendaSummary.overdueCount > 0 && (
-                            <p className="text-xs text-rose-400 font-semibold animate-pulse mt-0.5">
-                              Warning: {agendaSummary.overdueCount} overdue topic(s) pending.
+                            <p className="text-[11px] text-rose-400 font-semibold animate-pulse">
+                              Attention: {agendaSummary.overdueCount} overdue topic(s) pending.
                             </p>
                           )}
                         </div>
                       </div>
                       
-                      <div className="flex items-center gap-3 bg-slate-950/50 px-2 py-1.5 rounded-xl border border-slate-700/80 w-full sm:w-auto justify-between shadow-inner">
-                        <button onClick={() => setAgendaOffset(o => o - 1)} className="interactive-pop p-1 hover:bg-emerald-900/50 active:scale-90 rounded-lg text-slate-400 hover:text-emerald-300 transition-all">
+                      <div className="flex items-center gap-2 bg-slate-950/60 px-2 py-1 rounded-xl border border-slate-800 justify-between">
+                        <button onClick={() => setAgendaOffset(o => o - 1)} className="interactive-pop p-1 hover:bg-emerald-950/60 rounded-lg text-slate-400 hover:text-emerald-300">
                           <Icon name="ChevronLeft" size={16}/>
                         </button>
-                        <span className="text-sm font-bold w-24 text-center text-slate-200 select-none">
+                        <span className="text-xs font-bold w-20 text-center text-slate-200 select-none">
                           {getAgendaLabel()}
                         </span>
-                        <button onClick={() => setAgendaOffset(o => o + 1)} className="interactive-pop p-1 hover:bg-emerald-900/50 active:scale-90 rounded-lg text-slate-400 hover:text-emerald-300 transition-all">
+                        <button onClick={() => setAgendaOffset(o => o + 1)} className="interactive-pop p-1 hover:bg-emerald-950/60 rounded-lg text-slate-400 hover:text-emerald-300">
                           <Icon name="ChevronRight" size={16}/>
                         </button>
                       </div>
                     </div>
 
-                    <div key={agendaOffset} className="animate-agenda max-h-56 overflow-y-auto pr-2 custom-scrollbar pl-3 relative z-10">
+                    <div key={agendaOffset} className="max-h-48 overflow-y-auto pr-1 custom-scrollbar pl-2">
                       {agendaSummary.items.length === 0 ? (
-                        <div className="text-center py-6">
-                          <Icon name="CheckCircle2" size={32} className="mx-auto text-emerald-500/30 mb-2" />
-                          <p className="text-slate-500 font-medium">No reviews scheduled for this day.</p>
+                        <div className="text-center py-4">
+                          <p className="text-slate-500 text-xs font-medium">No reviews scheduled for this date.</p>
                         </div>
                       ) : (
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2.5">
                           {agendaSummary.items.map(item => (
                             <button 
                               key={`agenda-${item.id}`}
                               onClick={() => handleAgendaItemClick(item.subject, item.id)} 
-                              className="interactive-pop text-left bg-slate-800/40 hover:bg-slate-700/60 border border-slate-700/50 p-3 rounded-xl transition-all flex flex-col justify-between group h-full active:scale-[0.98]"
+                              className="interactive-pop text-left bg-slate-800/40 hover:bg-slate-800 border border-slate-700/60 p-2.5 rounded-xl flex flex-col justify-between group h-full"
                             >
-                              <div className="mb-3">
-                                <div className="text-[10px] font-bold text-emerald-400 uppercase tracking-wider mb-1 flex items-center gap-1">
+                              <div className="mb-2">
+                                <div className="text-[10px] font-bold text-emerald-400 uppercase tracking-wider mb-0.5 flex items-center gap-1">
                                   <Icon name="BookOpen" size={12}/> {item.subject}
                                 </div>
-                                <div className="text-sm text-slate-200 font-medium leading-snug line-clamp-2">{item.topic}</div>
+                                <div className="text-xs text-slate-200 font-medium leading-snug line-clamp-2">{item.topic}</div>
                               </div>
-                              <div className="self-start bg-slate-900/80 px-2 py-1 rounded text-xs font-bold text-slate-400 border border-slate-700 group-hover:border-emerald-500/40 transition-colors">
+                              <div className="self-start bg-slate-900 px-2 py-0.5 rounded text-[10px] font-bold text-slate-400 border border-slate-700">
                                 Rep #{item.repNumber}
                               </div>
                             </button>
@@ -1008,124 +835,92 @@
                     </div>
                   </SpotlightCard>
 
-                  <div className="flex flex-wrap items-center gap-2 mb-6 border-b border-slate-800 pb-px overflow-x-auto" style={{ scrollbarWidth: 'none' }}>
-                    {Object.keys(trackerData).map((subject, index) => {
-                      const isDragged = isDraggingSubject && dragSubjectItem.current === index;
-                      const isHovered = isDraggingSubject && dragHoverSubjectIndex === index && dragSubjectItem.current !== index;
-                      const isMovingRight = dragSubjectItem.current !== null && dragSubjectItem.current < index;
-
-                      let tabClass = `interactive-pop px-4 py-2 text-sm font-semibold rounded-t-lg transition-all border-b-2 -mb-px whitespace-nowrap active:scale-95 group cursor-grab active:cursor-grabbing flex items-center gap-2 select-none `;
+                  {/* Subject Tabs Header */}
+                  <div className="flex flex-wrap items-center gap-2 mb-4 border-b border-slate-800 pb-px overflow-x-auto no-scrollbar">
+                    {Object.keys(trackerData).map((subject) => {
+                      let tabClass = `interactive-pop px-4 py-2 text-xs sm:text-sm font-semibold rounded-t-xl transition-all border-b-2 -mb-px whitespace-nowrap group flex items-center gap-2 select-none `;
                       
                       if (activeTab === subject) {
-                        tabClass += 'text-teal-300 border-teal-400 bg-slate-800/80 shadow-[0_-2px_15px_rgba(20,184,166,0.15)] ';
+                        tabClass += 'text-cyan-300 border-cyan-400 bg-slate-900/90 shadow-[0_-2px_15px_rgba(6,182,212,0.15)] ';
                       } else {
-                        tabClass += 'text-slate-500 border-transparent hover:text-slate-400 hover:bg-slate-800/50 ';
-                      }
-
-                      if (isDragged) tabClass += 'opacity-40 bg-slate-900 scale-[0.98] border border-dashed border-teal-500/50 z-0 ';
-                      if (isHovered) tabClass += 'bg-slate-800/80 z-20 ';
-
-                      let tabStyle = {};
-                      if (isHovered) {
-                        tabStyle = { transform: isMovingRight ? 'translateX(-6px)' : 'translateX(6px)' };
+                        tabClass += 'text-slate-400 border-transparent hover:text-slate-200 hover:bg-slate-900/40 ';
                       }
 
                       return (
                         <div
                           key={subject}
-                          draggable
-                          onDragStart={(e) => handleSubjectDragStart(e, index)}
-                          onDragEnter={(e) => handleSubjectDragEnter(e, index)}
-                          onDragEnd={handleSubjectDragEnd}
-                          onDragOver={(e) => e.preventDefault()}
                           onClick={() => setActiveTab(subject)}
                           className={tabClass}
-                          style={tabStyle}
                         >
                           {subject}
                           <div 
                             onClick={(e) => { e.stopPropagation(); setSubjectToDelete(subject); }}
-                            className="opacity-0 group-hover:opacity-100 p-1 -mr-2 text-slate-500 hover:text-rose-400 hover:bg-rose-500/20 rounded transition-all"
+                            className="opacity-0 group-hover:opacity-100 p-1 text-slate-500 hover:text-rose-400 hover:bg-rose-500/20 rounded transition-all"
                             title="Delete Subject"
                           >
-                            <Icon name="Trash2" size={14} />
+                            <Icon name="Trash2" size={13} />
                           </div>
                         </div>
                       );
                     })}
                     <button 
                       onClick={() => setIsAddingSubject(true)}
-                      className="interactive-pop px-3 py-2 text-slate-500 border-b-2 border-transparent hover:text-teal-400 hover:bg-slate-800/50 active:scale-95 rounded-t-lg transition-all -mb-px flex items-center gap-1"
+                      className="interactive-pop px-3 py-2 text-slate-400 border-b-2 border-transparent hover:text-cyan-400 hover:bg-slate-900/40 rounded-t-xl transition-all -mb-px flex items-center gap-1 text-xs sm:text-sm font-semibold"
                     >
-                      <Icon name="Plus" size={16} /> New Subject
+                      <Icon name="Plus" size={15} /> New Subject
                     </button>
                   </div>
 
+                  {/* Main Subject Content Table */}
                   {activeTab && (
                     <div key={activeTab} className="animate-fade-in-tab w-full">
-                      <SpotlightCard className="bg-slate-900/80 backdrop-blur-xl rounded-2xl shadow-2xl border border-slate-700/50 overflow-hidden">
-                        <div className="relative z-10 p-4 bg-slate-950/50 border-b border-slate-800/80 flex flex-col md:flex-row gap-4 items-center justify-between">
-                          <form onSubmit={addNewTopic} className="flex w-full md:w-auto gap-2">
+                      <SpotlightCard className="bg-slate-900/80 backdrop-blur-xl rounded-2xl shadow-2xl border border-slate-800 overflow-hidden">
+                        <div className="p-3.5 bg-slate-950/60 border-b border-slate-800 flex flex-col sm:flex-row gap-3 items-center justify-between">
+                          <form onSubmit={addNewTopic} className="flex w-full sm:w-auto gap-2">
                             <input 
                               type="text" 
                               placeholder={`Add topic to ${activeTab}...`} 
                               value={newTopicName}
                               onChange={(e) => setNewTopicName(e.target.value)}
-                              className="px-4 py-2 rounded-lg bg-slate-950 border border-slate-700 focus:outline-none focus:ring-2 focus:ring-teal-500 w-full md:w-64 text-sm text-slate-200 placeholder-slate-500 transition-all"
+                              className="px-3.5 py-2 rounded-xl bg-slate-900 border border-slate-700/80 focus:outline-none focus:ring-2 focus:ring-cyan-500 w-full sm:w-72 text-xs sm:text-sm text-slate-200 placeholder-slate-500 transition-all"
                             />
-                            <button className="interactive-pop bg-teal-600 hover:bg-teal-500 active:scale-90 text-white p-2 rounded-lg transition-all shrink-0 shadow-[0_0_10px_rgba(13,148,136,0.3)]">
-                              <Icon name="Plus" size={20} />
+                            <button className="interactive-pop bg-gradient-to-r from-cyan-500 to-teal-500 hover:from-cyan-400 hover:to-teal-400 text-slate-950 font-bold p-2 px-3 rounded-xl transition-all shrink-0 shadow-md">
+                              <Icon name="Plus" size={18} />
                             </button>
                           </form>
-                          <div className="flex items-center gap-1">
-                            <div className="flex items-center gap-2 px-3 py-1 bg-teal-950/50 text-teal-300 border border-teal-500/20 rounded-full text-xs font-bold uppercase tracking-wider">
-                              <Icon name="Clock" size={14} />
-                              {currentTabItems.length} Topics
-                            </div>
+                          <div className="flex items-center gap-2 px-3 py-1 bg-cyan-950/50 text-cyan-300 border border-cyan-500/20 rounded-full text-xs font-bold uppercase tracking-wider">
+                            <Icon name="Clock" size={13} />
+                            {currentTabItems.length} Topics
                           </div>
                         </div>
 
-                        <div className="relative z-10 overflow-x-auto">
-                          <table className="w-full text-left border-collapse">
+                        {/* NO MIN-WIDTH / WRAPPING TABLE - FITS ALL SCREENS PERFECTLY */}
+                        <div className="w-full">
+                          <table className="w-full text-left border-collapse table-fixed">
                             <thead>
-                              <tr className="bg-slate-950/80 text-slate-400 uppercase text-[10px] tracking-wider font-bold">
-                                <th className="px-3 py-4 w-10"></th>
-                                <th className="px-4 py-4">Topic Name</th>
-                                <th className="px-4 py-4 w-40">Learned On</th>
+                              <tr className="bg-slate-950/90 text-slate-400 uppercase text-[10px] tracking-wider font-bold border-b border-slate-800">
+                                <th className="px-2 py-3.5 text-center w-8"></th>
+                                <th className="px-3 py-3.5">Topic Name</th>
+                                <th className="px-2 py-3.5 w-32 sm:w-36 text-center">Learned On</th>
                                 {INTERVALS.map((days, i) => (
-                                  <th key={i} className="px-2 py-4 text-center w-20">
+                                  <th key={i} className="px-1 py-3.5 text-center w-16 sm:w-20">
                                     <span className="block opacity-60">Rep {i+1}</span>
-                                    <span className="text-teal-400">+{days}d</span>
+                                    <span className="text-cyan-400">+{days}d</span>
                                   </th>
                                 ))}
-                                <th className="px-3 py-4 w-12"></th>
+                                <th className="px-2 py-3.5 text-center w-10"></th>
                               </tr>
                             </thead>
                             <tbody className="divide-y divide-slate-800/60">
                               {currentTabItems.map((item, index) => {
                                 const isDragged = isDragging && dragItem.current === index;
                                 const isHovered = isDragging && dragHoverIndex === index && dragItem.current !== index;
-                                const isMovingDown = dragItem.current !== null && dragItem.current < index;
 
-                                let rowClass = `interactive-pop transition-all duration-300 ease-out group relative `;
+                                let rowClass = `interactive-pop transition-all duration-200 group relative `;
                                 if (addedTopicId === item.id) rowClass += 'animate-add-topic z-10 ';
                                 if (!isDragging) rowClass += 'hover:bg-slate-800/40 ';
-
-                                if (isDragged) {
-                                  rowClass += 'opacity-40 bg-slate-900 scale-[0.98] border border-dashed border-teal-500/50 z-0 ';
-                                } else if (isHovered) {
-                                  rowClass += 'bg-slate-800/80 z-20 ';
-                                }
-
-                                let rowStyle = {};
-                                if (isHovered) {
-                                  rowStyle = {
-                                    transform: isMovingDown ? 'translateY(-6px)' : 'translateY(6px)',
-                                    boxShadow: isMovingDown 
-                                      ? '0 6px 15px -3px rgba(20,184,166,0.15)' 
-                                      : '0 -6px 15px -3px rgba(20,184,166,0.15)'
-                                  };
-                                }
+                                if (isDragged) rowClass += 'opacity-40 bg-slate-950 z-0 ';
+                                else if (isHovered) rowClass += 'bg-slate-800/80 z-20 ';
 
                                 return (
                                   <tr 
@@ -1137,26 +932,27 @@
                                     onDragEnd={handleDragEnd}
                                     onDragOver={(e) => e.preventDefault()}
                                     className={rowClass}
-                                    style={rowStyle}
                                   >
-                                    <td className="px-3 py-4 text-center cursor-grab active:cursor-grabbing">
-                                       <div className={`inline-flex items-center justify-center p-1.5 rounded-lg transition-all text-slate-500 hover:text-teal-400 hover:bg-teal-500/10 ${isDragging ? 'opacity-100 cursor-grabbing' : 'opacity-0 group-hover:opacity-100'}`}>
-                                          <Icon name="GripVertical" size={20} />
+                                    <td className="px-1 py-3 text-center cursor-grab active:cursor-grabbing">
+                                       <div className="inline-flex items-center justify-center p-1 rounded text-slate-600 group-hover:text-cyan-400">
+                                          <Icon name="GripVertical" size={16} />
                                        </div>
                                     </td>
-                                    <td className="px-4 py-4">
-                                      <div className="font-bold text-slate-200 text-base md:text-lg leading-snug break-words whitespace-normal">
+                                    
+                                    {/* Topic Cell with Clean Text Wrapping */}
+                                    <td className="px-3 py-3 align-middle">
+                                      <div className="font-bold text-slate-100 text-xs sm:text-sm md:text-base leading-snug break-words whitespace-normal">
                                         {item.topic}
                                       </div>
                                     </td>
-                                    <td className="px-4 py-4">
+                                    
+                                    <td className="px-2 py-3 align-middle">
                                       <div className="relative">
-                                        <Icon name="Calendar" className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 pointer-events-none" size={14} />
                                         <input 
                                           type="date" 
                                           value={item.firstLearned}
                                           onChange={(e) => handleDateChange(item.id, e.target.value)}
-                                          className="pl-9 pr-2 py-1.5 rounded-md border border-slate-700 text-xs md:text-sm focus:ring-2 focus:ring-teal-500 outline-none w-full bg-slate-900/50 text-slate-200 transition-all [color-scheme:dark] hover:bg-slate-800"
+                                          className="px-2 py-1.5 rounded-lg border border-slate-700/80 text-[11px] sm:text-xs focus:ring-1 focus:ring-cyan-400 outline-none w-full bg-slate-950 text-slate-200 [color-scheme:dark] hover:border-slate-600 transition-colors"
                                         />
                                       </div>
                                     </td>
@@ -1173,42 +969,42 @@
                                       if (!item.firstLearned) {
                                         buttonClass = "opacity-20 cursor-not-allowed grayscale border-transparent";
                                       } else if (completed) {
-                                        buttonClass = "bg-emerald-500/20 border-emerald-500/40 text-emerald-400 shadow-[0_0_10px_rgba(16,185,129,0.1)] scale-95";
+                                        buttonClass = "bg-emerald-500/20 border-emerald-500/40 text-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.15)]";
                                       } else if (urgency === 'due') {
-                                        buttonClass = "bg-rose-500/20 border-rose-500/60 text-rose-400 animate-pulse shadow-[0_0_15px_rgba(225,29,72,0.2)] ring-1 ring-rose-500/40 z-10 scale-105";
+                                        buttonClass = "bg-rose-500/20 border-rose-500/60 text-rose-400 animate-pulse ring-1 ring-rose-500/40";
                                       } else if (urgency === 'soon') {
-                                        buttonClass = "bg-amber-500/10 border-amber-500/30 text-amber-400 shadow-sm";
+                                        buttonClass = "bg-amber-500/10 border-amber-500/30 text-amber-400";
                                       } else {
-                                        buttonClass = "bg-slate-800/40 border-slate-700/50 text-teal-300/60 hover:bg-teal-900/30 hover:border-teal-500/40 hover:text-teal-300";
+                                        buttonClass = "bg-slate-950 border-slate-800 text-cyan-300/70 hover:bg-cyan-950/40 hover:border-cyan-500/40 hover:text-cyan-300";
                                       }
 
                                       return (
-                                        <td key={idx} className="px-1.5 py-4 text-center">
+                                        <td key={idx} className="px-1 py-3 text-center align-middle">
                                           <button
                                             disabled={!item.firstLearned}
                                             onClick={() => toggleRep(item.id, idx)}
-                                            className={`interactive-pop relative w-full flex flex-col items-center justify-center py-2.5 px-1 rounded-xl border transition-all duration-300 ${buttonClass}`}
-                                            title={completed && typeof completedVal === 'string' ? `Actually completed on ${formatDate(new Date(completedVal))}` : `Target: ${formatDate(targetDate)}`}
+                                            className={`interactive-pop relative w-full flex flex-col items-center justify-center py-2 px-1 rounded-xl border transition-all ${buttonClass}`}
+                                            title={completed && typeof completedVal === 'string' ? `Completed on ${formatDate(new Date(completedVal))}` : `Target: ${formatDate(targetDate)}`}
                                           >
-                                            <span className="text-[11px] md:text-xs font-black block mb-1">
+                                            <span className="text-[10px] sm:text-xs font-black block mb-0.5">
                                               {displayDate ? formatDate(displayDate) : '--'}
                                             </span>
                                             {completed ? (
-                                              <Icon name="CheckCircle2" size={18} strokeWidth={3} />
+                                              <Icon name="CheckCircle2" size={16} strokeWidth={2.5} />
                                             ) : (
-                                              <Icon name="Circle" size={18} strokeWidth={urgency === 'due' ? 3 : 2} />
+                                              <Icon name="Circle" size={16} strokeWidth={urgency === 'due' ? 2.5 : 2} />
                                             )}
                                           </button>
                                         </td>
                                       );
                                     })}
                                     
-                                    <td className="px-3 py-4 text-right">
+                                    <td className="px-2 py-3 text-center align-middle">
                                       <button 
                                         onClick={() => setTopicToDelete(item.id)}
-                                        className="interactive-pop p-1.5 text-slate-500 hover:text-rose-400 hover:bg-rose-500/10 active:scale-90 rounded-xl transition-all opacity-0 group-hover:opacity-100"
+                                        className="interactive-pop p-1.5 text-slate-500 hover:text-rose-400 hover:bg-rose-500/10 rounded-lg transition-all opacity-0 group-hover:opacity-100"
                                       >
-                                        <Icon name="Trash2" size={16} />
+                                        <Icon name="Trash2" size={15} />
                                       </button>
                                     </td>
                                   </tr>
@@ -1219,101 +1015,44 @@
                         </div>
                         
                         {currentTabItems.length === 0 && (
-                          <div className="relative z-10 p-16 text-center">
-                            <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-slate-800/50 text-slate-500 mb-4 border border-slate-700">
-                              <Icon name="BookOpen" size={32} />
-                            </div>
-                            <p className="text-slate-400 font-medium">Neural pathways empty for this subject.</p>
+                          <div className="p-12 text-center">
+                            <Icon name="BookOpen" size={36} className="mx-auto text-slate-600 mb-2" />
+                            <p className="text-slate-400 text-sm font-medium">No topics registered in this subject yet.</p>
                           </div>
                         )}
                       </SpotlightCard>
 
+                      {/* Subject Consolidation Progress Bar Chart */}
                       {currentTabItems.length > 0 && (
-                        <SpotlightCard className="mt-8 bg-slate-900/80 backdrop-blur-xl rounded-2xl shadow-2xl border border-slate-700/50 p-6 md:p-8">
-                          <div className="relative z-10 flex items-center justify-between mb-8 border-b border-slate-800 pb-4">
-                            <h2 className="text-xl font-bold text-slate-200 flex items-center gap-3">
-                              <Icon name="BarChart2" className="text-cyan-400" size={24} />
-                              Pathway Consolidation Progress
+                        <SpotlightCard className="mt-6 bg-slate-900/80 backdrop-blur-xl rounded-2xl border border-slate-800 p-5 md:p-6">
+                          <div className="flex items-center justify-between mb-6 border-b border-slate-800 pb-3">
+                            <h2 className="text-base font-bold text-slate-200 flex items-center gap-2.5">
+                              <Icon name="BarChart2" className="text-cyan-400" size={20} />
+                              Subject Progress Summary
                             </h2>
-                            <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider bg-slate-800/50 px-3 py-1 rounded-full">
-                              {activeTab} Overview
+                            <span className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider bg-slate-950 px-2.5 py-1 rounded-full border border-slate-800">
+                              {activeTab}
                             </span>
                           </div>
                           
-                          <div className="relative z-10 flex flex-col gap-4">
+                          <div className="flex flex-col gap-3">
                             {currentTabItems.map((item) => {
                               const completedReps = item.reps.filter(Boolean).length;
                               const percentage = (completedReps / INTERVALS.length) * 100;
 
-                              const sparkSpeed = percentage >= 66 ? 0.4 : (percentage >= 33 ? 0.7 : 1);
-
                               return (
-                                <div key={`chart-${item.id}`} className="interactive-pop chart-row flex items-center gap-4 group px-3 py-2 -mx-3 rounded-xl hover:bg-slate-800/40 cursor-default">
-                                  <div 
-                                    className="w-1/3 md:w-1/4 text-sm font-medium text-slate-400 truncate text-right group-hover:text-slate-300 transition-colors" 
-                                    title={item.topic}
-                                  >
+                                <div key={`chart-${item.id}`} className="flex items-center gap-3 group px-2 py-1 rounded-lg hover:bg-slate-800/30">
+                                  <div className="w-1/3 md:w-1/4 text-xs sm:text-sm font-medium text-slate-300 truncate text-right" title={item.topic}>
                                     {item.topic}
                                   </div>
-                                  
-                                  <div className="flex-1 h-3 md:h-4 bg-slate-950/50 rounded-full overflow-hidden border border-slate-800/50 relative flex items-center">
-                                    <div className="absolute inset-0 flex justify-between px-px pointer-events-none z-10">
-                                      {[...Array(INTERVALS.length - 1)].map((_, i) => (
-                                        <div key={i} className="h-full w-px bg-slate-900/80"></div>
-                                      ))}
-                                    </div>
+                                  <div className="flex-1 h-3 bg-slate-950 rounded-full overflow-hidden border border-slate-800 relative">
                                     <div 
-                                      className={`h-full rounded-full transition-all duration-1000 ease-out relative z-0 ${getProgressColor(percentage)} overflow-hidden ${percentage === 100 ? 'animate-chaotic-flare' : ''}`}
+                                      className={`h-full rounded-full transition-all duration-700 ease-out ${getProgressColor(percentage)}`}
                                       style={{ width: `${percentage}%` }}
-                                    >
-                                      {/* Energy Flow & Neon Tail Animations */}
-                                      {percentage > 0 && percentage < 100 && (
-                                        <>
-                                          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent animate-shimmer-bar" style={{animationDuration: `${2 * sparkSpeed}s`}}></div>
-                                          <div className="absolute top-0 bottom-0 bg-white animate-neon-tail rounded-full mix-blend-overlay pointer-events-none" style={{animationDuration: `${1.5 * sparkSpeed}s`}}></div>
-                                          <div className="absolute top-[1px] right-[1px] bottom-[1px] w-1.5 bg-white shadow-[0_0_8px_rgba(255,255,255,0.8)] blur-[0.5px] rounded-full animate-pulse z-20 pointer-events-none" style={{animationDuration: `${2 * sparkSpeed}s`}}></div>
-                                          
-                                          {/* Plasma Sparks */}
-                                          <div className="absolute right-1 top-1/2 w-1 h-1 bg-white shadow-[0_0_4px_#fff] rounded-full animate-spark-1 pointer-events-none z-20" style={{animationDelay: '0.1s', animationDuration: `${1 * sparkSpeed}s`}}></div>
-                                          <div className="absolute right-1 top-1/2 w-1 h-1 bg-teal-200 shadow-[0_0_4px_#99f6e4] rounded-full animate-spark-2 pointer-events-none z-20" style={{animationDelay: '0.5s', animationDuration: `${1.2 * sparkSpeed}s`}}></div>
-                                          <div className="absolute right-1 top-1/2 w-[2px] h-[2px] bg-cyan-100 shadow-[0_0_4px_#cffafe] rounded-full animate-spark-3 pointer-events-none z-20" style={{animationDelay: '0.3s', animationDuration: `${0.8 * sparkSpeed}s`}}></div>
-                                          
-                                          {percentage >= 33 && (
-                                            <>
-                                              <div className="absolute right-1 top-1/2 w-1 h-1 bg-emerald-200 shadow-[0_0_5px_#a7f3d0] rounded-full animate-spark-1 pointer-events-none z-20" style={{animationDelay: '0.2s', animationDuration: `${0.9 * sparkSpeed}s`}}></div>
-                                              <div className="absolute right-1 top-1/2 w-[2px] h-[2px] bg-white shadow-[0_0_4px_#fff] rounded-full animate-spark-3 pointer-events-none z-20" style={{animationDelay: '0.7s', animationDuration: `${1.1 * sparkSpeed}s`}}></div>
-                                            </>
-                                          )}
-
-                                          {percentage >= 66 && (
-                                            <>
-                                              <div className="absolute right-1 top-1/2 w-[3px] h-[3px] bg-teal-100 shadow-[0_0_6px_#ccfbf1] rounded-full animate-spark-2 pointer-events-none z-20" style={{animationDelay: '0.4s', animationDuration: `${0.7 * sparkSpeed}s`}}></div>
-                                              <div className="absolute right-1 top-1/2 w-1 h-1 bg-cyan-200 shadow-[0_0_5px_#a5f3fc] rounded-full animate-spark-1 pointer-events-none z-20" style={{animationDelay: '0.6s', animationDuration: `${0.85 * sparkSpeed}s`}}></div>
-                                            </>
-                                          )}
-                                        </>
-                                      )}
-                                      {percentage === 100 && (
-                                        <>
-                                          <div className="absolute top-0 bottom-0 w-[150%] bg-gradient-to-r from-transparent via-white to-transparent animate-chaotic-sweep pointer-events-none mix-blend-overlay"></div>
-                                          
-                                          <div className="absolute right-1 top-1/2 w-3 h-3 bg-white shadow-[0_0_15px_#fff] rounded-full animate-particle-explode pointer-events-none z-30" style={{'--tx': '50px', '--ty': '-60px', animationDelay: '0s'}}></div>
-                                          <div className="absolute right-1 top-1/2 w-4 h-4 bg-emerald-200 shadow-[0_0_20px_#6ee7b7] rounded-full animate-particle-explode pointer-events-none z-30" style={{'--tx': '70px', '--ty': '40px', animationDelay: '0.05s'}}></div>
-                                          <div className="absolute right-1 top-1/2 w-2 h-2 bg-teal-100 shadow-[0_0_10px_#ccfbf1] rounded-full animate-particle-explode pointer-events-none z-30" style={{'--tx': '-50px', '--ty': '-70px', animationDelay: '0.1s'}}></div>
-                                          <div className="absolute right-1 top-1/2 w-3 h-3 bg-white shadow-[0_0_15px_#fff] rounded-full animate-particle-explode pointer-events-none z-30" style={{'--tx': '-40px', '--ty': '70px', animationDelay: '0.02s'}}></div>
-                                          <div className="absolute right-1 top-1/2 w-2 h-2 bg-cyan-200 shadow-[0_0_12px_#a5f3fc] rounded-full animate-particle-explode pointer-events-none z-30" style={{'--tx': '40px', '--ty': '-90px', animationDelay: '0.08s'}}></div>
-                                          <div className="absolute right-1 top-1/2 w-3 h-3 bg-emerald-100 shadow-[0_0_15px_#d1fae5] rounded-full animate-particle-explode pointer-events-none z-30" style={{'--tx': '-70px', '--ty': '30px', animationDelay: '0.04s'}}></div>
-                                          <div className="absolute right-1 top-1/2 w-2 h-2 bg-white shadow-[0_0_12px_#fff] rounded-full animate-particle-explode pointer-events-none z-30" style={{'--tx': '15px', '--ty': '80px', animationDelay: '0.12s'}}></div>
-                                          <div className="absolute right-1 top-1/2 w-5 h-5 bg-teal-300 shadow-[0_0_25px_#5eead4] rounded-full animate-particle-explode pointer-events-none z-30" style={{'--tx': '90px', '--ty': '-20px', animationDelay: '0.06s'}}></div>
-
-                                          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent animate-shimmer-bar" style={{animationDuration: '3s', animationDelay: '0.8s'}}></div>
-                                        </>
-                                      )}
-                                    </div>
+                                    ></div>
                                   </div>
-                                  
-                                  <div className="w-12 text-xs font-bold text-slate-500 text-right group-hover:text-teal-400 transition-colors">
-                                    {completedReps} / {INTERVALS.length}
+                                  <div className="w-10 text-[11px] font-bold text-slate-400 text-right">
+                                    {completedReps}/{INTERVALS.length}
                                   </div>
                                 </div>
                               );
@@ -1322,103 +1061,75 @@
                         </SpotlightCard>
                       )}
 
-                      <SpotlightCard className="mt-8 bg-slate-900/80 backdrop-blur-xl rounded-2xl shadow-2xl border border-slate-700/50 p-6 md:p-8 overflow-hidden">
-                        <div className="relative z-10 flex flex-col sm:flex-row items-start sm:items-center justify-between mb-6 border-b border-slate-800 pb-4 gap-4">
-                          <div className="flex items-center gap-3">
-                            <Icon name="CalendarDays" className="text-emerald-400" size={24} />
-                            <h2 className="text-xl font-bold text-slate-200">
-                              Activity Heatmap
+                      {/* Heatmap Activity Tracker */}
+                      <SpotlightCard className="mt-6 bg-slate-900/80 backdrop-blur-xl rounded-2xl border border-slate-800 p-5 md:p-6 overflow-hidden">
+                        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-4 border-b border-slate-800 pb-3 gap-3">
+                          <div className="flex items-center gap-2.5">
+                            <Icon name="CalendarDays" className="text-emerald-400" size={20} />
+                            <h2 className="text-base font-bold text-slate-200">
+                              Annual Activity Matrix
                             </h2>
                           </div>
-                          <div className="flex items-center gap-3 bg-slate-800/50 px-2 py-1 rounded-full border border-slate-700">
-                            <button onClick={() => setHeatmapYear(y => y - 1)} className="interactive-pop p-1 hover:bg-slate-700 active:scale-90 rounded-full text-slate-400 hover:text-slate-200 transition-all">
-                              <Icon name="ChevronLeft" size={16}/>
+                          <div className="flex items-center gap-2 bg-slate-950 px-2 py-1 rounded-full border border-slate-800">
+                            <button onClick={() => setHeatmapYear(y => y - 1)} className="interactive-pop p-1 hover:bg-slate-800 rounded-full text-slate-400 hover:text-slate-200">
+                              <Icon name="ChevronLeft" size={14}/>
                             </button>
-                            <span className="text-sm font-bold text-slate-300 w-12 text-center select-none">{heatmapYear}</span>
-                            <button onClick={() => setHeatmapYear(y => y + 1)} className="interactive-pop p-1 hover:bg-slate-700 active:scale-90 rounded-full text-slate-400 hover:text-slate-200 transition-all">
-                              <Icon name="ChevronRight" size={16}/>
+                            <span className="text-xs font-bold text-slate-300 w-10 text-center select-none">{heatmapYear}</span>
+                            <button onClick={() => setHeatmapYear(y => y + 1)} className="interactive-pop p-1 hover:bg-slate-800 rounded-full text-slate-400 hover:text-slate-200">
+                              <Icon name="ChevronRight" size={14}/>
                             </button>
                           </div>
                         </div>
                         
-                        <div className="relative z-10 overflow-x-auto pb-2" style={{ scrollbarWidth: 'none' }}>
+                        <div className="overflow-x-auto pb-2 no-scrollbar">
                           <div className="min-w-max">
-                            <div key={heatmapYear} className="flex gap-3 animate-fade-heatmap">
-                              <div className="flex flex-col gap-[6px] text-[10px] text-slate-500 font-bold mt-[2px]">
-                                <div className="h-3 leading-none"></div>
-                                <div className="h-3 leading-none">Mon</div>
-                                <div className="h-3 leading-none"></div>
-                                <div className="h-3 leading-none">Wed</div>
-                                <div className="h-3 leading-none"></div>
-                                <div className="h-3 leading-none">Fri</div>
-                                <div className="h-3 leading-none"></div>
+                            <div className="flex gap-2.5">
+                              <div className="flex flex-col gap-[5px] text-[9px] text-slate-500 font-bold mt-[2px]">
+                                <div className="h-2.5 leading-none">Mon</div>
+                                <div className="h-2.5 leading-none"></div>
+                                <div className="h-2.5 leading-none">Wed</div>
+                                <div className="h-2.5 leading-none"></div>
+                                <div className="h-2.5 leading-none">Fri</div>
                               </div>
                               
-                              <div className="grid grid-rows-7 gap-1.5" style={{ gridAutoFlow: 'column' }}>
+                              <div className="grid grid-rows-7 gap-1" style={{ gridAutoFlow: 'column' }}>
                                 {firstDayPadding.map((_, i) => (
-                                  <div key={`pad-${i}`} className="w-3 h-3 rounded-[2px] opacity-0 pointer-events-none"></div>
+                                  <div key={`pad-${i}`} className="w-2.5 h-2.5 opacity-0 pointer-events-none"></div>
                                 ))}
                                 {gridDays.map((day, i) => {
-                                  let colorClass = 'bg-slate-800/40 border-slate-700/30';
+                                  let colorClass = 'bg-slate-950 border-slate-800/60';
                                   if (day.count > 0) colorClass = 'bg-emerald-900/60 border-emerald-800/50';
                                   if (day.count >= 2) colorClass = 'bg-emerald-700/80 border-emerald-600/50';
-                                  if (day.count >= 4) colorClass = 'bg-emerald-500 border-emerald-400/50 shadow-[0_0_8px_rgba(16,185,129,0.3)]';
-                                  if (day.count >= 6) colorClass = 'bg-emerald-400 border-emerald-300/80 shadow-[0_0_12px_rgba(52,211,153,0.5)]';
+                                  if (day.count >= 4) colorClass = 'bg-emerald-500 border-emerald-400/50 shadow-[0_0_8px_rgba(52,211,153,0.3)]';
+                                  if (day.count >= 6) colorClass = 'bg-emerald-400 border-emerald-300 shadow-[0_0_12px_rgba(52,211,153,0.5)]';
 
                                   return (
                                     <div
                                       key={`day-${i}`}
-                                      className={`w-3 h-3 rounded-[2px] border ${colorClass} transition-colors hover:ring-2 hover:ring-white hover:z-10 cursor-help relative`}
-                                      title={`${day.count} review${day.count !== 1 ? 's' : ''} on ${day.formatted}`}
+                                      className={`w-2.5 h-2.5 rounded-[2px] border ${colorClass} transition-colors hover:ring-2 hover:ring-white cursor-help`}
+                                      title={`${day.count} review(s) on ${day.formatted}`}
                                     ></div>
                                   );
                                 })}
                               </div>
                             </div>
-                            
-                            <div className="mt-5 flex items-center justify-end gap-2 text-[10px] font-bold text-slate-500 uppercase tracking-wider">
-                              <span>Less</span>
-                              <div className="w-3 h-3 rounded-[2px] bg-slate-800/40 border border-slate-700/30"></div>
-                              <div className="w-3 h-3 rounded-[2px] bg-emerald-900/60 border border-emerald-800/50"></div>
-                              <div className="w-3 h-3 rounded-[2px] bg-emerald-700/80 border border-emerald-600/50"></div>
-                              <div className="w-3 h-3 rounded-[2px] bg-emerald-500 border border-emerald-400/50"></div>
-                              <div className="w-3 h-3 rounded-[2px] bg-emerald-400 border border-emerald-300/80"></div>
-                              <span>More</span>
-                            </div>
                           </div>
                         </div>
                       </SpotlightCard>
-
                     </div>
                   )}
                 </main>
               </div>
 
-              <footer className="max-w-7xl mx-auto mt-12 mb-8 text-center border-t border-slate-800/60 pt-8 text-slate-500 relative z-10">
-                <p className="text-xs font-medium uppercase tracking-[0.2em] flex items-center justify-center gap-2">
-                  <Icon name="Activity" size={12} className="text-teal-400" />
-                  Spaced Repetition Protocol • {INTERVALS.join(', ')} Days
-                </p>
-              </footer>
-
+              {/* Modals for Deletion and Subject Creation */}
               {topicToDelete && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm animate-fade-in-backdrop">
-                  <div className="bg-slate-900 border border-slate-700 rounded-2xl p-6 max-w-sm w-full shadow-2xl animate-scale-up-modal">
-                    <h3 className="text-xl font-bold text-slate-200 mb-2">Delete Topic?</h3>
-                    <p className="text-slate-400 mb-6">Are you sure you want to remove this topic? This action cannot be undone.</p>
+                  <div className="bg-slate-900 border border-slate-700/80 rounded-2xl p-6 max-w-sm w-full shadow-2xl animate-scale-up-modal">
+                    <h3 className="text-lg font-bold text-slate-100 mb-2">Delete Topic?</h3>
+                    <p className="text-slate-400 text-xs mb-6">Are you sure you want to remove this topic from your tracker?</p>
                     <div className="flex gap-3 justify-end">
-                      <button 
-                        onClick={() => setTopicToDelete(null)}
-                        className="interactive-pop px-4 py-2 rounded-xl text-sm font-semibold text-slate-300 hover:bg-slate-800 transition-colors"
-                      >
-                        Cancel
-                      </button>
-                      <button 
-                        onClick={() => deleteTopic(topicToDelete)}
-                        className="interactive-pop px-4 py-2 rounded-xl text-sm font-semibold bg-rose-500/20 text-rose-400 border border-rose-500/50 hover:bg-rose-500/30 transition-colors"
-                      >
-                        Delete
-                      </button>
+                      <button onClick={() => setTopicToDelete(null)} className="interactive-pop px-4 py-2 rounded-xl text-xs font-semibold text-slate-300 hover:bg-slate-800">Cancel</button>
+                      <button onClick={() => deleteTopic(topicToDelete)} className="interactive-pop px-4 py-2 rounded-xl text-xs font-semibold bg-rose-500/20 text-rose-400 border border-rose-500/50 hover:bg-rose-500/30">Delete</button>
                     </div>
                   </div>
                 </div>
@@ -1426,22 +1137,12 @@
 
               {subjectToDelete && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm animate-fade-in-backdrop">
-                  <div className="bg-slate-900 border border-slate-700 rounded-2xl p-6 max-w-sm w-full shadow-2xl animate-scale-up-modal">
-                    <h3 className="text-xl font-bold text-rose-500 mb-2">Delete Subject?</h3>
-                    <p className="text-slate-400 mb-6">Are you sure you want to remove <strong>{subjectToDelete}</strong>? This will permanently delete all topics inside it.</p>
+                  <div className="bg-slate-900 border border-slate-700/80 rounded-2xl p-6 max-w-sm w-full shadow-2xl animate-scale-up-modal">
+                    <h3 className="text-lg font-bold text-rose-400 mb-2">Delete Subject?</h3>
+                    <p className="text-slate-400 text-xs mb-6">Are you sure you want to remove <strong>{subjectToDelete}</strong> and all topics inside it?</p>
                     <div className="flex gap-3 justify-end">
-                      <button 
-                        onClick={() => setSubjectToDelete(null)}
-                        className="interactive-pop px-4 py-2 rounded-xl text-sm font-semibold text-slate-300 hover:bg-slate-800 transition-colors"
-                      >
-                        Cancel
-                      </button>
-                      <button 
-                        onClick={() => handleDeleteSubject(subjectToDelete)}
-                        className="interactive-pop px-4 py-2 rounded-xl text-sm font-semibold bg-rose-500/20 text-rose-400 border border-rose-500/50 hover:bg-rose-500/30 transition-colors"
-                      >
-                        Delete
-                      </button>
+                      <button onClick={() => setSubjectToDelete(null)} className="interactive-pop px-4 py-2 rounded-xl text-xs font-semibold text-slate-300 hover:bg-slate-800">Cancel</button>
+                      <button onClick={() => handleDeleteSubject(subjectToDelete)} className="interactive-pop px-4 py-2 rounded-xl text-xs font-semibold bg-rose-500/20 text-rose-400 border border-rose-500/50 hover:bg-rose-500/30">Delete Subject</button>
                     </div>
                   </div>
                 </div>
@@ -1449,12 +1150,12 @@
               
               {isAddingSubject && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm animate-fade-in-backdrop">
-                  <div className="bg-slate-900 border border-slate-700 rounded-2xl p-6 max-w-sm w-full shadow-2xl animate-scale-up-modal">
-                    <h3 className="text-xl font-bold text-slate-200 mb-4">Add New Subject</h3>
-                    <input autoFocus type="text" value={newSubjectName} onChange={e => setNewSubjectName(e.target.value)} placeholder="e.g., Surgery, Radiology..." className="w-full px-4 py-2 mb-6 rounded-lg bg-slate-950 border border-slate-700 text-slate-200 focus:outline-none focus:ring-2 focus:ring-teal-500" />
+                  <div className="bg-slate-900 border border-slate-700/80 rounded-2xl p-6 max-w-sm w-full shadow-2xl animate-scale-up-modal">
+                    <h3 className="text-lg font-bold text-slate-100 mb-4">Add New Subject</h3>
+                    <input autoFocus type="text" value={newSubjectName} onChange={e => setNewSubjectName(e.target.value)} placeholder="e.g., Surgery, Pathology..." className="w-full px-4 py-2 mb-6 rounded-xl bg-slate-950 border border-slate-700 text-slate-200 focus:outline-none focus:ring-2 focus:ring-cyan-500 text-xs" />
                     <div className="flex gap-3 justify-end">
-                      <button onClick={() => { setIsAddingSubject(false); setNewSubjectName(''); }} className="interactive-pop px-4 py-2 rounded-xl text-sm font-semibold text-slate-300 hover:bg-slate-800 transition-colors">Cancel</button>
-                      <button onClick={handleAddSubject} className="interactive-pop px-4 py-2 rounded-xl text-sm font-semibold bg-teal-600/20 text-teal-400 border border-teal-500/50 hover:bg-teal-600/40 transition-colors">Create</button>
+                      <button onClick={() => { setIsAddingSubject(false); setNewSubjectName(''); }} className="interactive-pop px-4 py-2 rounded-xl text-xs font-semibold text-slate-300 hover:bg-slate-800">Cancel</button>
+                      <button onClick={handleAddSubject} className="interactive-pop px-4 py-2 rounded-xl text-xs font-semibold bg-cyan-600/20 text-cyan-300 border border-cyan-500/50 hover:bg-cyan-600/40">Create</button>
                     </div>
                   </div>
                 </div>
@@ -1474,7 +1175,57 @@
           
           const appId = typeof __app_id !== 'undefined' ? __app_id : 'med-tracker-pro';
 
-          // 1. Initialize Firebase Services
+          // Drag-and-Drop Handler for Main Dashboard Modules
+          const dragModuleItem = useRef(null);
+          const dragOverModuleItem = useRef(null);
+          const [isDraggingModule, setIsDraggingModule] = useState(false);
+
+          const handleModuleDragStart = (e, index) => {
+            dragModuleItem.current = index;
+            if (e.dataTransfer) e.dataTransfer.effectAllowed = 'move';
+            setTimeout(() => setIsDraggingModule(true), 0);
+          };
+
+          const handleModuleDragEnter = (e, index) => {
+            e.preventDefault();
+            dragOverModuleItem.current = index;
+          };
+
+          const handleModuleSort = () => {
+            if (dragModuleItem.current === null || dragOverModuleItem.current === null) return;
+            if (dragModuleItem.current === dragOverModuleItem.current) return;
+
+            const currentModules = [...modules];
+            const draggedModuleContent = currentModules[dragModuleItem.current];
+            
+            currentModules.splice(dragModuleItem.current, 1);
+            currentModules.splice(dragOverModuleItem.current, 0, draggedModuleContent);
+            
+            setModules(currentModules);
+
+            if (user && db) {
+              const { doc, setDoc } = window.FirebaseAPI;
+              currentModules.forEach((mod) => {
+                const modRef = doc(db, 'artifacts', appId, 'users', user.uid, 'modules', mod.id);
+                setDoc(modRef, {
+                  id: mod.id,
+                  name: mod.name,
+                  icon: mod.icon,
+                  createdAt: mod.createdAt,
+                  dataString: JSON.stringify(mod.data)
+                }).catch(e => console.error("Module order sync error", e));
+              });
+            }
+          };
+
+          const handleModuleDragEnd = () => {
+            handleModuleSort();
+            setIsDraggingModule(false);
+            dragModuleItem.current = null;
+            dragOverModuleItem.current = null;
+          };
+
+          // Initialize Firebase Infrastructure
           useEffect(() => {
             let unsubscribeAuth;
             const initFirebase = async () => {
@@ -1536,6 +1287,7 @@
             await signOut(getAuth());
           };
 
+          // Snapshot listener with Auto-Injected GIT Module Detection
           useEffect(() => {
             if (!user || !db) return;
             setIsLoading(true);
@@ -1558,33 +1310,44 @@
                 });
               });
 
-              // Seed Data if User has zero modules (Creates both CNS & GIT)
+              // Initial Seed: Add BOTH CNS Module & GIT Module automatically if empty
               if (loadedModules.length === 0) {
-                const freshCNS = sanitizeModuleData(CNS_DATA);
-                const freshGIT = sanitizeModuleData(GIT_DATA);
-
                 const cnsMod = {
-                  id: 'cns_mod_' + Math.random().toString(36).substr(2, 6),
+                  id: Math.random().toString(36).substr(2, 9),
                   name: 'CNS Module',
                   icon: 'Brain',
                   createdAt: new Date().toISOString(),
                 };
                 const gitMod = {
-                  id: 'git_mod_' + Math.random().toString(36).substr(2, 6),
-                  name: 'GIT Module',
-                  icon: 'BookOpen',
+                  id: Math.random().toString(36).substr(2, 9),
+                  name: 'GIT Module (95 Lectures)',
+                  icon: 'Stethoscope',
                   createdAt: new Date().toISOString(),
                 };
                 
                 await setDoc(doc(db, 'artifacts', appId, 'users', user.uid, 'modules', cnsMod.id), {
                   ...cnsMod,
-                  dataString: JSON.stringify(freshCNS)
+                  dataString: JSON.stringify(sanitizeModuleData(CNS_DATA))
                 });
                 await setDoc(doc(db, 'artifacts', appId, 'users', user.uid, 'modules', gitMod.id), {
                   ...gitMod,
-                  dataString: JSON.stringify(freshGIT)
+                  dataString: JSON.stringify(sanitizeModuleData(GIT_DATA))
                 });
               } else {
+                // Ensure existing users without GIT Module receive it automatically
+                const hasGit = loadedModules.some(m => m.name.toLowerCase().includes('git'));
+                if (!hasGit) {
+                  const gitMod = {
+                    id: Math.random().toString(36).substr(2, 9),
+                    name: 'GIT Module (95 Lectures)',
+                    icon: 'Stethoscope',
+                    createdAt: new Date().toISOString(),
+                  };
+                  await setDoc(doc(db, 'artifacts', appId, 'users', user.uid, 'modules', gitMod.id), {
+                    ...gitMod,
+                    dataString: JSON.stringify(sanitizeModuleData(GIT_DATA))
+                  });
+                }
                 setModules(loadedModules);
                 setIsLoading(false);
               }
@@ -1596,7 +1359,6 @@
             return () => unsubscribe();
           }, [user, db, appId]);
 
-
           const [activeModuleId, setActiveModuleId] = useState(null);
           const [isCreatingModule, setIsCreatingModule] = useState(false);
           const [newModuleName, setNewModuleName] = useState('');
@@ -1605,20 +1367,16 @@
 
           const handleUpdateModule = async (updatedModule) => {
             setModules(modules.map(m => m.id === updatedModule.id ? updatedModule : m));
-
             if (!user || !db) return;
             const { doc, setDoc } = window.FirebaseAPI;
             const modRef = doc(db, 'artifacts', appId, 'users', user.uid, 'modules', updatedModule.id);
-            
-            const dataToSave = {
+            await setDoc(modRef, {
                 id: updatedModule.id,
                 name: updatedModule.name,
                 icon: updatedModule.icon,
                 createdAt: updatedModule.createdAt,
                 dataString: JSON.stringify(updatedModule.data) 
-            };
-            
-            await setDoc(modRef, dataToSave).catch(e => console.error("Sync error", e));
+            }).catch(e => console.error("Sync error", e));
           };
 
           const handleCreateModule = async () => {
@@ -1635,40 +1393,29 @@
               createdAt: new Date().toISOString(), 
             };
 
-            const dataToSave = { ...newMod, dataString: JSON.stringify(newData) };
             const modRef = doc(db, 'artifacts', appId, 'users', user.uid, 'modules', newMod.id);
-            
-            await setDoc(modRef, dataToSave);
+            await setDoc(modRef, { ...newMod, dataString: JSON.stringify(newData) });
             setNewModuleName('');
             setIsCreatingModule(false);
           };
 
-          const handleAddGITPreset = async () => {
+          const handleAddPresetGit = async () => {
             if (!user || !db) return;
             const { doc, setDoc } = window.FirebaseAPI;
-            const freshGIT = sanitizeModuleData(GIT_DATA);
-
             const gitMod = {
-              id: 'git_mod_' + Math.random().toString(36).substr(2, 6),
+              id: Math.random().toString(36).substr(2, 9),
               name: 'GIT Module (95 Lectures)',
-              icon: 'BookOpen',
+              icon: 'Stethoscope',
               createdAt: new Date().toISOString(),
             };
-
-            const dataToSave = {
-              ...gitMod,
-              dataString: JSON.stringify(freshGIT)
-            };
-
-            await setDoc(doc(db, 'artifacts', appId, 'users', user.uid, 'modules', gitMod.id), dataToSave);
+            const modRef = doc(db, 'artifacts', appId, 'users', user.uid, 'modules', gitMod.id);
+            await setDoc(modRef, { ...gitMod, dataString: JSON.stringify(sanitizeModuleData(GIT_DATA)) });
           };
 
           const handleDeleteModule = async (id) => {
             if (!user || !db) return;
             const { doc, deleteDoc } = window.FirebaseAPI;
-            const modRef = doc(db, 'artifacts', appId, 'users', user.uid, 'modules', id);
-            
-            await deleteDoc(modRef);
+            await deleteDoc(doc(db, 'artifacts', appId, 'users', user.uid, 'modules', id));
             setModuleToDelete(null);
           };
 
@@ -1699,8 +1446,7 @@
                             createdAt: mod.createdAt || new Date().toISOString(),
                             dataString: JSON.stringify(sanitizedData)
                         };
-                        const modRef = doc(db, 'artifacts', appId, 'users', user.uid, 'modules', dataToSave.id);
-                        await setDoc(modRef, dataToSave);
+                        await setDoc(doc(db, 'artifacts', appId, 'users', user.uid, 'modules', dataToSave.id), dataToSave);
                     }
                 }
               } catch (err) { console.error("Import failed", err); }
@@ -1710,11 +1456,11 @@
 
           if (!authInitialized || (isLoading && user)) {
             return (
-              <div className="min-h-screen bg-slate-950 text-slate-200 flex flex-col items-center justify-center">
-                <div className="animate-spin-slow text-teal-500 mb-6 bg-slate-900/50 p-4 rounded-full border border-teal-500/30 shadow-[0_0_30px_rgba(20,184,166,0.2)]">
-                  <Icon name="Network" size={56} />
+              <div className="min-h-screen bg-slate-950 text-slate-200 flex flex-col items-center justify-center p-4 relative overflow-hidden">
+                <div className="animate-spin-slow text-cyan-400 mb-6 bg-slate-900/80 p-5 rounded-full border border-cyan-500/40 shadow-[0_0_35px_rgba(6,182,212,0.3)]">
+                  <Icon name="HeartPulse" size={50} />
                 </div>
-                <p className="text-teal-400 font-bold uppercase tracking-[0.2em] animate-pulse">Syncing Cloud Neural Pathways...</p>
+                <p className="text-cyan-300 text-xs sm:text-sm font-bold uppercase tracking-[0.25em] animate-pulse">Syncing Medical Neural Network...</p>
               </div>
             );
           }
@@ -1722,38 +1468,34 @@
           if (!user) {
             return (
               <div className="min-h-screen bg-slate-950 text-slate-200 flex flex-col items-center justify-center p-4 relative overflow-hidden">
-                <div className="absolute top-0 left-1/4 w-96 h-96 bg-teal-600/20 rounded-full blur-[128px] opacity-60 pointer-events-none z-0"></div>
-                <div className="absolute bottom-0 right-1/4 w-[30rem] h-[30rem] bg-cyan-600/10 rounded-full blur-[128px] opacity-60 pointer-events-none z-0"></div>
+                <div className="absolute top-0 left-1/4 w-96 h-96 bg-cyan-600/20 rounded-full blur-[128px] opacity-60 pointer-events-none z-0"></div>
+                <div className="absolute bottom-0 right-1/4 w-[30rem] h-[30rem] bg-emerald-600/15 rounded-full blur-[128px] opacity-60 pointer-events-none z-0"></div>
                 
-                <SpotlightCard className="max-w-md w-full bg-slate-900/80 backdrop-blur-xl border border-slate-700/50 rounded-3xl p-8 shadow-2xl relative z-10 flex flex-col items-center text-center">
-                    <div className="bg-teal-500/20 p-4 rounded-full text-teal-400 mb-6 shadow-inner border border-teal-500/30">
-                        <Icon name="Activity" size={48} />
+                <SpotlightCard className="max-w-md w-full bg-slate-900/80 backdrop-blur-xl border border-cyan-500/30 rounded-3xl p-8 shadow-[0_0_40px_rgba(6,182,212,0.15)] relative z-10 flex flex-col items-center text-center">
+                    <div className="bg-gradient-to-br from-cyan-500/20 to-teal-500/20 p-5 rounded-full text-cyan-400 mb-6 border border-cyan-500/40 animate-medical-pulse">
+                        <Icon name="HeartPulse" size={48} />
                     </div>
-                    <h1 className="text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-teal-400 to-cyan-400 mb-2">
+                    <h1 className="text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-cyan-300 via-teal-300 to-emerald-400 mb-2">
                         Med Tracker Pro
                     </h1>
-                    <p className="text-slate-400 font-medium mb-8">
-                        Sign in to sync your spaced repetition progress securely across all your devices.
+                    <p className="text-slate-400 text-xs sm:text-sm mb-8">
+                        Sign in to synchronize your medical spaced repetition progress securely across all devices.
                     </p>
                     
                     <button 
                         onClick={handleGoogleLogin}
-                        className="interactive-pop w-full flex items-center justify-center gap-3 bg-white hover:bg-slate-100 text-slate-900 px-6 py-4 rounded-xl font-bold transition-all shadow-lg"
+                        className="interactive-pop w-full flex items-center justify-center gap-3 bg-gradient-to-r from-cyan-500 to-teal-500 text-slate-950 px-6 py-3.5 rounded-xl font-bold transition-all shadow-lg text-sm"
                     >
-                        <svg viewBox="0 0 24 24" width="24" height="24" xmlns="http://www.w3.org/2000/svg">
+                        <svg viewBox="0 0 24 24" width="20" height="20" xmlns="http://www.w3.org/2000/svg">
                             <g transform="matrix(1, 0, 0, 1, 27.009001, -39.238998)">
-                                <path fill="#4285F4" d="M -3.264 51.509 C -3.264 50.719 -3.334 49.969 -3.454 49.239 L -14.754 49.239 L -14.754 53.749 L -8.284 53.749 C -8.574 55.229 -9.424 56.479 -10.684 57.329 L -10.684 60.329 L -6.824 60.329 C -4.564 58.239 -3.264 55.159 -3.264 51.509 Z"/>
-                                <path fill="#34A853" d="M -14.754 63.239 C -11.514 63.239 -8.804 62.159 -6.824 60.329 L -10.684 57.329 C -11.764 58.049 -13.134 58.489 -14.754 58.489 C -17.884 58.489 -20.534 56.379 -21.484 53.529 L -25.464 53.529 L -25.464 56.619 C -23.494 60.539 -19.444 63.239 -14.754 63.239 Z"/>
-                                <path fill="#FBBC05" d="M -21.484 53.529 C -21.734 52.809 -21.864 52.039 -21.864 51.239 C -21.864 50.439 -21.724 49.669 -21.484 48.949 L -21.484 45.859 L -25.464 45.859 C -26.284 47.479 -26.754 49.299 -26.754 51.239 C -26.754 53.179 -26.284 54.999 -25.464 56.619 L -21.484 53.529 Z"/>
-                                <path fill="#EA4335" d="M -14.754 43.989 C -12.984 43.989 -11.404 44.599 -10.154 45.789 L -6.734 42.369 C -8.804 40.429 -11.514 39.239 -14.754 39.239 C -19.444 39.239 -23.494 41.939 -25.464 45.859 L -21.484 48.949 C -20.534 46.099 -17.884 43.989 -14.754 43.989 Z"/>
+                                <path fill="#ffffff" d="M -3.264 51.509 C -3.264 50.719 -3.334 49.969 -3.454 49.239 L -14.754 49.239 L -14.754 53.749 L -8.284 53.749 C -8.574 55.229 -9.424 56.479 -10.684 57.329 L -10.684 60.329 L -6.824 60.329 C -4.564 58.239 -3.264 55.159 -3.264 51.509 Z"/>
+                                <path fill="#ffffff" opacity="0.9" d="M -14.754 63.239 C -11.514 63.239 -8.804 62.159 -6.824 60.329 L -10.684 57.329 C -11.764 58.049 -13.134 58.489 -14.754 58.489 C -17.884 58.489 -20.534 56.379 -21.484 53.529 L -25.464 53.529 L -25.464 56.619 C -23.494 60.539 -19.444 63.239 -14.754 63.239 Z"/>
+                                <path fill="#ffffff" opacity="0.8" d="M -21.484 53.529 C -21.734 52.809 -21.864 52.039 -21.864 51.239 C -21.864 50.439 -21.724 49.669 -21.484 48.949 L -21.484 45.859 L -25.464 45.859 C -26.284 47.479 -26.754 49.299 -26.754 51.239 C -26.754 53.179 -26.284 54.999 -25.464 56.619 L -21.484 53.529 Z"/>
+                                <path fill="#ffffff" opacity="0.95" d="M -14.754 43.989 C -12.984 43.989 -11.404 44.599 -10.154 45.789 L -6.734 42.369 C -8.804 40.429 -11.514 39.239 -14.754 39.239 C -19.444 39.239 -23.494 41.939 -25.464 45.859 L -21.484 48.949 C -20.534 46.099 -17.884 43.989 -14.754 43.989 Z"/>
                             </g>
                         </svg>
                         Continue with Google
                     </button>
-                    <div className="mt-8 text-[10px] text-slate-500 uppercase tracking-widest font-bold flex flex-col gap-1 items-center">
-                        <span>End-to-End Authentication</span>
-                        <Icon name="Network" size={14} className="text-teal-500/50" />
-                    </div>
                 </SpotlightCard>
                 <Watermark />
               </div>
@@ -1775,41 +1517,47 @@
 
           return (
             <div className="min-h-screen bg-slate-950 text-slate-200 font-sans p-4 md:p-8 relative overflow-hidden">
+              {/* Background Ambient Bio-Orbs */}
+              <div className="absolute top-0 left-1/4 w-[28rem] h-[28rem] bg-cyan-600/15 rounded-full blur-[140px] opacity-70 pointer-events-none z-0 animate-float-slow"></div>
+              <div className="absolute bottom-0 right-1/4 w-[32rem] h-[32rem] bg-emerald-600/15 rounded-full blur-[140px] opacity-60 pointer-events-none z-0 animate-float-slow" style={{animationDelay: '-3s'}}></div>
               
-              {/* Glowing Background Orbs */}
-              <div className="absolute top-0 left-1/4 w-96 h-96 bg-teal-600/20 rounded-full blur-[128px] opacity-60 pointer-events-none z-0"></div>
-              <div className="absolute bottom-0 right-1/4 w-[30rem] h-[30rem] bg-cyan-600/10 rounded-full blur-[128px] opacity-60 pointer-events-none z-0"></div>
+              {/* ECG Wave Scanner Bar */}
+              <div className="absolute top-16 left-0 w-full h-[2px] bg-gradient-to-r from-transparent via-cyan-500/30 to-transparent pointer-events-none z-0 overflow-hidden">
+                <div className="w-1/3 h-full bg-cyan-400 shadow-[0_0_15px_#22d3ee] animate-ecg-scan"></div>
+              </div>
 
               <div className="animate-slide-in-left max-w-7xl mx-auto relative z-10">
-                <header className="mb-12 mt-4 flex flex-col md:flex-row md:items-center justify-between gap-6">
+                <header className="mb-8 mt-2 flex flex-col lg:flex-row lg:items-center justify-between gap-5">
                   <div>
-                    <h1 className="text-4xl md:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-teal-400 to-cyan-400 mb-2 flex items-center gap-4">
-                      <Icon name="Activity" size={40} className="text-teal-400" />
-                      Medical Modules
+                    <h1 className="text-3xl sm:text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-cyan-300 via-teal-300 to-emerald-400 mb-2 flex items-center gap-3">
+                      <div className="p-2 bg-cyan-500/10 rounded-2xl border border-cyan-500/30 text-cyan-400 shadow-[0_0_20px_rgba(6,182,212,0.2)]">
+                        <Icon name="HeartPulse" size={32} className="animate-medical-pulse" />
+                      </div>
+                      Medical Hub
                     </h1>
-                    <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 mt-2">
-                      <p className="text-slate-400 text-lg">Select a module to continue your protocol.</p>
-                      <div className="flex items-center gap-2 bg-emerald-950/40 border border-emerald-500/20 px-3 py-1 rounded-full w-max">
+                    <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 mt-1">
+                      <p className="text-slate-400 text-xs sm:text-sm">Drag module cards to reorder • Tap any card to open.</p>
+                      <div className="flex items-center gap-2 bg-cyan-950/40 border border-cyan-500/30 px-2.5 py-0.5 rounded-full w-max">
                         <div className="w-2 h-2 bg-emerald-400 rounded-full animate-pulse shadow-[0_0_8px_#34d399]"></div>
-                        <span className="text-[10px] font-bold text-emerald-400 uppercase tracking-widest">
-                          {user?.displayName ? `Synced: ${user.displayName.split(' ')[0]}` : 'Live Cloud Sync Active'}
+                        <span className="text-[10px] font-bold text-cyan-300 uppercase tracking-widest">
+                          {user?.displayName ? `Synced: ${user.displayName.split(' ')[0]}` : 'Live Cloud Sync'}
                         </span>
                       </div>
                     </div>
                   </div>
 
-                  <div className="flex flex-wrap items-center gap-3 self-center md:self-auto justify-end">
-                    <button onClick={handleAddGITPreset} className="interactive-pop flex items-center gap-2 px-4 py-2 bg-teal-600/20 border border-teal-500/40 hover:bg-teal-600/30 active:scale-95 rounded-xl text-sm font-bold text-teal-300 transition-all shadow-sm">
-                      <Icon name="Plus" size={16} /> Load GIT Module (95 Lecs)
+                  <div className="flex flex-wrap items-center gap-2 self-start lg:self-auto">
+                    <button onClick={handleAddPresetGit} className="interactive-pop flex items-center gap-1.5 px-3 py-2 bg-cyan-950/60 border border-cyan-500/40 hover:bg-cyan-900/60 rounded-xl text-xs font-bold text-cyan-300 shadow-sm">
+                      <Icon name="Plus" size={15} /> Add GIT Module (95 Lecs)
                     </button>
-                    <button onClick={handleExportData} className="interactive-pop flex items-center gap-2 px-4 py-2 bg-slate-900/80 border border-slate-700 hover:bg-slate-800 active:scale-95 rounded-xl text-sm font-bold text-teal-400 transition-all shadow-sm">
-                      <Icon name="Upload" size={16} /> Export
+                    <button onClick={handleExportData} className="interactive-pop flex items-center gap-1.5 px-3 py-2 bg-slate-900/90 border border-slate-700 hover:border-cyan-500/40 rounded-xl text-xs font-bold text-slate-300">
+                      <Icon name="Upload" size={15} /> Export
                     </button>
-                    <button onClick={() => fileInputRef.current?.click()} className="interactive-pop flex items-center gap-2 px-4 py-2 bg-slate-900/80 border border-slate-700 hover:bg-slate-800 active:scale-95 rounded-xl text-sm font-bold text-emerald-400 transition-all shadow-sm">
-                      <Icon name="Download" size={16} /> Import
+                    <button onClick={() => fileInputRef.current?.click()} className="interactive-pop flex items-center gap-1.5 px-3 py-2 bg-slate-900/90 border border-slate-700 hover:border-teal-500/40 rounded-xl text-xs font-bold text-slate-300">
+                      <Icon name="Download" size={15} /> Import
                     </button>
-                    <button onClick={handleLogout} className="interactive-pop flex items-center gap-2 px-4 py-2 bg-rose-500/10 border border-rose-500/30 hover:bg-rose-500/20 active:scale-95 rounded-xl text-sm font-bold text-rose-400 transition-all shadow-sm">
-                      <Icon name="LogOut" size={16} /> Sign Out
+                    <button onClick={handleLogout} className="interactive-pop flex items-center gap-1.5 px-3 py-2 bg-rose-500/10 border border-rose-500/30 hover:bg-rose-500/20 rounded-xl text-xs font-bold text-rose-400">
+                      <Icon name="LogOut" size={15} /> Exit
                     </button>
                     <input type="file" accept=".json" ref={fileInputRef} onChange={handleImportData} className="hidden" />
                   </div>
@@ -1817,36 +1565,77 @@
 
                 <DigitalClock />
 
-                <main className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {modules.map(mod => {
+                {/* Module Card Drag-and-Drop Hub */}
+                <main className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+                  {modules.map((mod, index) => {
                     const totalTopics = Object.values(mod.data || {}).flat().length;
+                    const isDragged = isDraggingModule && dragModuleItem.current === index;
+
+                    let cardClass = `interactive-pop bg-slate-900/80 backdrop-blur-xl rounded-2xl p-5 border transition-all duration-300 shadow-xl group flex flex-col cursor-pointer min-h-[200px] relative `;
+                    if (isDragged) cardClass += 'opacity-40 bg-slate-950 border-dashed border-cyan-500 z-0 ';
+                    else cardClass += 'border-slate-800 hover:border-cyan-500/50 hover:shadow-[0_0_30px_rgba(6,182,212,0.2)] ';
+
                     return (
-                      <SpotlightCard key={mod.id} onClick={() => setActiveModuleId(mod.id)} className="interactive-pop bg-slate-900/80 backdrop-blur-xl rounded-2xl p-6 border border-slate-700/50 hover:border-teal-500/50 transition-all shadow-xl hover:shadow-[0_0_30px_rgba(20,184,166,0.15)] group flex flex-col cursor-pointer min-h-[220px]">
-                        <div className="flex justify-between items-start mb-4 relative z-10">
-                          <div className="bg-teal-500/20 p-3 rounded-xl text-teal-400">
-                            <Icon name={mod.icon || "BookOpen"} size={28} />
+                      <SpotlightCard 
+                        key={mod.id} 
+                        draggable
+                        onDragStart={(e) => handleModuleDragStart(e, index)}
+                        onDragEnter={(e) => handleModuleDragEnter(e, index)}
+                        onDragEnd={handleModuleDragEnd}
+                        onDragOver={(e) => e.preventDefault()}
+                        onClick={() => setActiveModuleId(mod.id)} 
+                        className={cardClass}
+                        spotlightColor="rgba(6, 182, 212, 0.25)"
+                      >
+                        <div className="flex justify-between items-start mb-3 relative z-10">
+                          <div className="flex items-center gap-2">
+                            <div className="p-1.5 rounded-lg text-slate-500 hover:text-cyan-400 cursor-grab active:cursor-grabbing transition-colors" title="Drag to reorder">
+                              <Icon name="GripVertical" size={18} />
+                            </div>
+                            <div className="bg-gradient-to-br from-cyan-500/20 to-teal-500/20 p-2.5 rounded-xl text-cyan-400 border border-cyan-500/30">
+                              <Icon name={mod.icon || "Brain"} size={24} />
+                            </div>
                           </div>
-                          <div className="flex gap-2">
-                            <button onClick={(e) => { e.stopPropagation(); setModuleToDelete(mod.id); }} className="p-2 text-slate-500 hover:text-rose-400 hover:bg-rose-500/10 active:scale-90 transition-all opacity-0 group-hover:opacity-100 bg-slate-800 rounded-lg">
-                              <Icon name="Trash2" size={18} />
-                            </button>
-                          </div>
+                          
+                          <button 
+                            onClick={(e) => { e.stopPropagation(); setModuleToDelete(mod.id); }} 
+                            className="p-1.5 text-slate-500 hover:text-rose-400 hover:bg-rose-500/10 rounded-lg opacity-0 group-hover:opacity-100 transition-all bg-slate-800"
+                            title="Delete Module"
+                          >
+                            <Icon name="Trash2" size={16} />
+                          </button>
                         </div>
-                        <h3 className="text-2xl font-bold text-slate-200 mb-2 relative z-10">{mod.name}</h3>
-                        <p className="text-slate-400 font-medium mb-6 flex items-center gap-2 relative z-10"><Icon name="BookOpen" size={16}/> {totalTopics} {totalTopics === 1 ? 'Total Topic' : 'Total Topics'} to Master</p>
-                        <div className="mt-auto flex items-center gap-2 text-sm font-bold text-teal-400 group-hover:text-teal-300 transition-colors relative z-10">
-                          Open Tracker <Icon name="ChevronRight" size={16} />
+
+                        <h3 className="text-xl font-bold text-slate-100 mb-1 relative z-10 group-hover:text-cyan-300 transition-colors">
+                          {mod.name}
+                        </h3>
+                        
+                        <p className="text-slate-400 font-medium text-xs mb-6 flex items-center gap-1.5 relative z-10">
+                          <Icon name="BookOpen" size={14} className="text-cyan-400" /> 
+                          {totalTopics} {totalTopics === 1 ? 'Topic' : 'Topics'} Mastered
+                        </p>
+
+                        <div className="mt-auto flex items-center justify-between text-xs font-bold text-cyan-400 group-hover:text-cyan-300 transition-colors relative z-10 pt-3 border-t border-slate-800">
+                          <span className="uppercase tracking-wider text-[10px] text-slate-400 group-hover:text-cyan-300">
+                            Open Protocol
+                          </span>
+                          <Icon name="ChevronRight" size={16} />
                         </div>
                       </SpotlightCard>
-                    )
+                    );
                   })}
 
-                  <SpotlightCard onClick={() => setIsCreatingModule(true)} className="interactive-pop bg-slate-900/40 backdrop-blur-xl rounded-2xl p-6 border-2 border-dashed border-slate-700 hover:border-teal-400/60 transition-all hover:bg-slate-800/40 flex flex-col items-center justify-center min-h-[220px] group cursor-pointer">
-                    <div className="relative z-10 flex flex-col items-center justify-center w-full h-full">
-                      <div className="bg-slate-800 p-4 rounded-full text-slate-400 group-hover:text-teal-400 group-hover:bg-teal-500/20 transition-all mb-4">
-                        <Icon name="FolderPlus" size={32} />
+                  <SpotlightCard 
+                    onClick={() => setIsCreatingModule(true)} 
+                    className="interactive-pop bg-slate-900/40 backdrop-blur-xl rounded-2xl p-5 border-2 border-dashed border-slate-800 hover:border-cyan-400/60 transition-all hover:bg-slate-800/40 flex flex-col items-center justify-center min-h-[200px] group cursor-pointer"
+                    spotlightColor="rgba(6, 182, 212, 0.2)"
+                  >
+                    <div className="relative z-10 flex flex-col items-center justify-center text-center">
+                      <div className="bg-slate-800/80 p-3.5 rounded-2xl text-slate-400 group-hover:text-cyan-300 transition-all mb-2">
+                        <Icon name="FolderPlus" size={28} />
                       </div>
-                      <h3 className="text-xl font-bold text-slate-400 group-hover:text-teal-300 transition-colors">Create Blank Module</h3>
+                      <h3 className="text-sm font-bold text-slate-300 group-hover:text-cyan-300 transition-colors">Create Blank Module</h3>
+                      <p className="text-[10px] text-slate-500 mt-0.5">Add custom medical subject tracker</p>
                     </div>
                   </SpotlightCard>
                 </main>
@@ -1854,13 +1643,15 @@
 
               {isCreatingModule && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm animate-fade-in-backdrop">
-                  <div className="bg-slate-900 border border-slate-700 rounded-2xl p-6 max-w-sm w-full shadow-2xl animate-scale-up-modal">
-                    <h3 className="text-xl font-bold text-slate-200 mb-4">Create Blank Module</h3>
-                    <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Module Name</label>
-                    <input autoFocus type="text" value={newModuleName} onChange={e => setNewModuleName(e.target.value)} placeholder="e.g., Endocrine..." className="w-full px-4 py-2 mb-6 rounded-lg bg-slate-950 border border-slate-700 text-slate-200 focus:outline-none focus:ring-2 focus:ring-teal-500" />
+                  <div className="bg-slate-900 border border-slate-700/80 rounded-2xl p-6 max-w-sm w-full shadow-2xl animate-scale-up-modal">
+                    <h3 className="text-lg font-bold text-slate-100 mb-3 flex items-center gap-2">
+                      <Icon name="FolderPlus" className="text-cyan-400" size={20} />
+                      Create Custom Module
+                    </h3>
+                    <input autoFocus type="text" value={newModuleName} onChange={e => setNewModuleName(e.target.value)} placeholder="e.g., Cardiology, Renal..." className="w-full px-3.5 py-2 mb-5 rounded-xl bg-slate-950 border border-slate-700 text-slate-200 focus:outline-none focus:ring-1 focus:ring-cyan-500 text-xs" />
                     <div className="flex gap-3 justify-end">
-                      <button onClick={() => setIsCreatingModule(false)} className="interactive-pop px-4 py-2 rounded-xl text-sm font-semibold text-slate-300 hover:bg-slate-800 transition-colors">Cancel</button>
-                      <button onClick={handleCreateModule} className="interactive-pop px-4 py-2 rounded-xl text-sm font-semibold bg-teal-600/20 text-teal-400 border border-teal-500/50 hover:bg-teal-600/40 transition-colors">Create</button>
+                      <button onClick={() => setIsCreatingModule(false)} className="interactive-pop px-4 py-2 rounded-xl text-xs font-semibold text-slate-300 hover:bg-slate-800">Cancel</button>
+                      <button onClick={handleCreateModule} className="interactive-pop px-4 py-2 rounded-xl text-xs font-semibold bg-cyan-600/20 text-cyan-300 border border-cyan-500/50 hover:bg-cyan-600/40">Create</button>
                     </div>
                   </div>
                 </div>
@@ -1868,12 +1659,12 @@
 
               {moduleToDelete && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm animate-fade-in-backdrop">
-                  <div className="bg-slate-900 border border-slate-700 rounded-2xl p-6 max-w-sm w-full shadow-2xl animate-scale-up-modal">
-                    <h3 className="text-xl font-bold text-rose-500 mb-2">Delete Module?</h3>
-                    <p className="text-slate-400 mb-6">Are you sure you want to remove this module? This action cannot be undone.</p>
+                  <div className="bg-slate-900 border border-slate-700/80 rounded-2xl p-6 max-w-sm w-full shadow-2xl animate-scale-up-modal">
+                    <h3 className="text-lg font-bold text-rose-400 mb-2">Delete Module?</h3>
+                    <p className="text-slate-400 text-xs mb-5">Are you sure you want to delete this module? All repetition data inside will be removed.</p>
                     <div className="flex gap-3 justify-end">
-                      <button onClick={() => setModuleToDelete(null)} className="interactive-pop px-4 py-2 rounded-xl text-sm font-semibold text-slate-300 hover:bg-slate-800 transition-colors">Cancel</button>
-                      <button onClick={() => handleDeleteModule(moduleToDelete)} className="interactive-pop px-4 py-2 rounded-xl text-sm font-semibold bg-rose-500/20 text-rose-400 border border-rose-500/50 hover:bg-rose-500/30 transition-colors">Delete Permanently</button>
+                      <button onClick={() => setModuleToDelete(null)} className="interactive-pop px-4 py-2 rounded-xl text-xs font-semibold text-slate-300 hover:bg-slate-800">Cancel</button>
+                      <button onClick={() => handleDeleteModule(moduleToDelete)} className="interactive-pop px-4 py-2 rounded-xl text-xs font-semibold bg-rose-500/20 text-rose-400 border border-rose-500/50 hover:bg-rose-500/30">Delete</button>
                     </div>
                   </div>
                 </div>
